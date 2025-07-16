@@ -1,7 +1,8 @@
 #include "lib3man.h"
+#include <stddef.h>
 
-dynamic_arr newArr(int cap){
-    int * arr = malloc(cap * sizeof(int));
+dynamic_arr newArr(size_t capacity){
+    int * arr = malloc(capacity * sizeof(int));
     if (arr == NULL) return (dynamic_arr) {
         .data = NULL,
         .size = 0,
@@ -10,20 +11,27 @@ dynamic_arr newArr(int cap){
     return (dynamic_arr){
         .data = arr,
         .size = 0,
-        .capacity = cap,
+        .capacity = capacity,
     };
 }
 
-void ArrPush(dynamic_arr * darr, int n){
-    if(darr->size < darr->capacity){
-        darr->data[darr->size] = n;
-        darr->size++;
+void ArrPush(dynamic_arr * arr, int n){
+    if(arr->size < arr->capacity){
+        arr->data[arr->size] = n;
+        arr->size++;
     }else{
-        darr->capacity *= 2;
-        darr->data = realloc(darr->data, darr->capacity * sizeof(int));
-        darr->data[darr->size] = n;
-        darr->size++;
+        if(arr->capacity == 0) arr->capacity = 5;
+        arr->capacity *= 2;
+        arr->data = realloc(arr->data, arr->capacity * sizeof(int));
+        arr->data[arr->size] = n;
+        arr->size++;
     }
+}
+
+void freeArr(dynamic_arr * arr){
+    free(arr->data);
+    arr->capacity = 0;
+    arr->size = 0;
 }
 // int main(){
 //     dynamic_arr arr = newArr(1);
