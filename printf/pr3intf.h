@@ -13,6 +13,9 @@ void putfloat(float nb);
 
 int man_strlen(char * str);
 
+
+void putint_hex(unsigned int nb);
+
 void putstr(char *a); 
 
 int pr3intf(char * str, ...);

@@ -1,39 +1,29 @@
 #include "pr3intf.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <unistd.h>
 
-
-
-
+// the main is temporary
 int main(){
-    // pr3intf("Hello world! %d\n", 55);
-    putint_signed(-2147483648);
-    write(1, "\n", 1);
-    putint_signed(55);
-    write(1, "\n", 1);
-    putint_signed(2147483647);
-    write(1, "\n", 1);
-    putint_unsigned(2147483999);
-    write(1, "\n", 1);
-
-    // printf("%d", 0.5f == 0);
-    pr3intf("testing testing %d anger builds %s\n", 9.555, "The universe breaks everyone");
+    // tsting
+    pr3intf("pr3intf testing testing %x anger builds %s\n", 999, "The universe breaks everyone");
+    printf("printf testing testing %x anger builds %s\n", 999, "The universe breaks everyone");
     return 0;
 }
 
 int pr3intf(char * str, ...){
-    char * buff;
     va_list args;
     va_start(args, str);
     while(*str){
-        char a = *str;
         if(*str == '%'){
             switch ((char)*(++str)) {
+                case 'u':
+                    putint_unsigned(va_arg(args, int));
+                    break;
                 case 'd':
+                case 'i':
                 case 'D':
-                    // printf("int %d\n", va_arg(args, int));
-                    putint_signed((int)va_arg(args, double));
+                    putint_signed(va_arg(args, int));
+                    break;
+                case 'x':
+                    putint_hex(va_arg(args, int));
                     break;
                 case 's':
                 case 'S':
@@ -43,7 +33,7 @@ int pr3intf(char * str, ...){
                     write(1, str, 1);
             }
         }else
-            write(1, &a, 1);
+            write(1, str, 1);
         str++;
     }
     va_end(args);
@@ -90,6 +80,25 @@ void putstr(char *a){
         i++;
     }
 }
+
+void putint_hex(unsigned int nb){
+    int i = 0;
+    char nums[8];
+    if(nb == 0){
+        write(1, "0", 1);
+    }
+
+    while(nb){
+        nums[i] = "0123456789abcdef"[nb % 16];
+        nb /= 16;
+        i++;
+    }
+
+    while(i--){
+        write(1, &nums[i], 1);
+    }
+}
+
 
 void putint_unsigned(unsigned int nb){
     char nums[11];
