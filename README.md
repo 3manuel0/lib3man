@@ -1,6 +1,6 @@
 ### 🧪 lib3man
 
-lib3man is a small C library I'm building for learning nad for fun too. It includes some basic data structures and utilities for now it has dynamic array and a mini printf (pr3intf) more comming soon...
+lib3man is a small C library I'm building for learning and for fun too. It includes some basic data structures and utilities for now it has dynamic array and a mini printf (pr3intf) more comming soon...
 
 ### 🎯 Why I Made This
 
