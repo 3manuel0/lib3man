@@ -43,5 +43,14 @@
         arr->capacity = 0;\
         arr->size = 0;\
     }\
-//end dynamic Array
+//end of dynamic Array
+
+
+// linked list
+typedef struct list{
+    int data;
+    struct list * next;
+}list;
+
+// end oflinked list
 #endif
