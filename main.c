@@ -12,6 +12,7 @@ void list_push(list * head, int value){
     current->data = value;
     current->next = NULL;
 }
+
 void print_list(list * head){
     list * current = head;
     while(current != NULL){

@@ -3,22 +3,27 @@
 
 #include <unistd.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
-void putint_signed(int nb);
+size_t putint_signed(int nb);
 
-void putint_unsigned(unsigned int nb);
+size_t putint_unsigned(unsigned int nb);
 
-void putfloat(float nb);
+size_t putint_signed_long(long int nb);
 
+size_t putint_unsigned_long(size_t nb);
 
-int man_strlen(char * str);
+size_t putfloat(float nb);
 
+size_t man_strlen(char * str);
 
-void putint_hex(unsigned int nb);
+size_t putint_hex(unsigned int nb);
 
-void putstr(char *a); 
+size_t putint_hex_long(size_t nb);
 
-int pr3intf(char * str, ...);
+size_t putstr(char *a); 
+
+size_t pr3intf(char * str, ...);
 
 
 #endif
