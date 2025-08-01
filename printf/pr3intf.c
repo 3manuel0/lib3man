@@ -7,16 +7,17 @@ int main(){
     // tsting
     // putint_signed_long(-9223372036854775807LL);
     printf("\n%zu\n", putint_signed(185261));
+    // printf("%d %s %d", 1, 2, 33);
     //pr3intf("\npr3intf testing testing %x %lu %ld anger builds %s\n", 999, -1, -9223372036854775807LL,"The universe breaks everyone");
     //printf("printf testing testing %x %lu %ld anger builds %s\n", 999, (long)-1,-9223372036854775807LL,"The universe breaks everyone");
-    // printf("pr3intf %zu printf %zu\n", pr3intf("\npr3intf testing testing %x  %d anger builds %s\n", 999, -1,"The universe breaks everyone"), printf("\npr3intf testing testing %x  %d anger builds %s\n", 999, -1, "The universe breaks everyone"));
+    printf("pr3intf %zu printf %zu\n", pr3intf("\npr3intf testing testing %x  %d anger builds %s\n", 999, -1, "The universe breaks everyone"), printf("\npr3intf testing testing %x  %d anger builds %s\n", 999, -1, "The universe breaks everyone"));
     return 0;
 }
 
-size_t pr3intf(char * str, ...){
+int pr3intf(char * str, ...){
     va_list args;
+    size_t length = 0;
     va_start(args, str);
-    size_t length;
     while(*str){
         if(*str == '%'){
             switch ((char)*(++str)) {
@@ -61,9 +62,9 @@ size_t pr3intf(char * str, ...){
         str++;
     }
     va_end(args);
-    // return length;
+    return length;
     // fix the problem with the length
-    return 0;
+    // return 0;
 }
 
 
@@ -133,7 +134,7 @@ size_t putint_signed_long(signed long nb){
 size_t putint_unsigned_long(unsigned long int nb){
     char nums[20];
     int i = 0;
-    int length;
+    int length = 0;
     if(nb == 0){
         write(1, "0", 1);
     }

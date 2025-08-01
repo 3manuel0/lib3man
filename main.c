@@ -2,15 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void list_push(list * head, int value){
-    list * current = head;
-    while(current->next != NULL){
-        current = current->next;
+void list_push(list * node, int value){
+    list * head = node;
+    while(head->next != NULL){
+        head = head->next;
     }
-    current->next = malloc(sizeof(list));
-    current = current->next;
-    current->data = value;
-    current->next = NULL;
+    head->next = malloc(sizeof(list));
+    head = head->next;
+    head->data = value;
+    head->next = NULL;
 }
 
 void print_list(list * head){

@@ -23,7 +23,7 @@ size_t putint_hex_long(size_t nb);
 
 size_t putstr(char *a); 
 
-size_t pr3intf(char * str, ...);
+int pr3intf(char * str, ...);
 
 
 #endif
