@@ -1,9 +1,24 @@
 #ifndef LIB_3MAN
 #define LIB_3MAN
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+// Arena allocator
+typedef struct {
+  void *memory;
+  void *address;
+  size_t capacity;
+  size_t cur_size;
+} Arena;
+
+void create_Arena(Arena *arena);
+void arena_Alloc(Arena *arena, void *data, size_t size);
+void arena_reset(Arena *arena);
+void arena_free(Arena *arena);
+// end of arena allocator
 
 // dynamic Array
 #define CREATE_ARR(type, name)                                                 \
@@ -60,7 +75,7 @@ void free_list(list *head);
 
 // end of linked list
 
-// length base string
+// first attempt at a length base string
 
 typedef struct {
   char *str;
@@ -69,7 +84,7 @@ typedef struct {
 
 str_t str_t_from_const(const char *s);
 
-void str_t_append(str_t *a, str_t *b);
+str_t str_t_append(str_t *a, str_t *b);
 
 void str_t_free(str_t *s);
 

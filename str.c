@@ -7,7 +7,7 @@ str_t str_t_from_const(const char * s){
     return (str_t){t, size};
 }
 
-void str_t_append(str_t *a, str_t *b){
+str_t str_t_append(str_t *a, str_t *b){
     size_t newlen = a->len + b->len;
     char * temp = malloc(newlen);
     size_t offst = 0;
@@ -26,6 +26,7 @@ void str_t_append(str_t *a, str_t *b){
     free(a->str);
     a->str = temp;
     a->len = newlen;
+    return *a;
 }
 
 void str_t_free(str_t * s){
