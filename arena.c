@@ -17,6 +17,7 @@ void arena_Alloc(Arena * arena, void * data, size_t size){
     if(arena->cur_size + size < arena->capacity){
         memcpy(arena->address, data, size);
         arena->address =  (char *)arena->address + size;
+        arena->cur_size += size;
     }else{
         perror("arena is full\n");
         // I will add more options later
@@ -32,6 +33,7 @@ void arena_reset(Arena * arena){
 
 
 void arena_free(Arena * arena){
+    if(arena->memory == NULL) return;
     // free the arena before closing the programme
     free(arena->memory);
     arena->address = NULL;

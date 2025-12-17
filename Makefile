@@ -1,2 +1,2 @@
 main:
-	gcc  str.c main.c -o main
+	gcc  arena.c main.c -o main
