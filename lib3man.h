@@ -15,7 +15,7 @@ typedef struct {
 } Arena;
 
 void create_Arena(Arena *arena);
-void arena_Alloc(Arena *arena, void *data, size_t size);
+void *arena_Alloc(Arena *arena, size_t size);
 void arena_reset(Arena *arena);
 void arena_free(Arena *arena);
 // end of arena allocator

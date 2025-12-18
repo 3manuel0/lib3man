@@ -12,16 +12,18 @@ void create_Arena(Arena * arena){
 }
 
 
-void arena_Alloc(Arena * arena, void * data, size_t size){
+void * arena_Alloc(Arena * arena, size_t size){
+    void * ptr = NULL;
     if(arena->memory == NULL)create_Arena(arena);
     if(arena->cur_size + size < arena->capacity){
-        memcpy(arena->address, data, size);
+        ptr = arena->address;
         arena->address =  (char *)arena->address + size;
         arena->cur_size += size;
     }else{
         perror("arena is full\n");
         // I will add more options later
     }
+    return ptr;
 }
 
 void arena_reset(Arena * arena){
