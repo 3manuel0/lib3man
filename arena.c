@@ -3,16 +3,15 @@
 #include <unistd.h>
 
 Arena create_Arena(size_t arena_size){
-    Arena arena = {
-        .capacity = arena_size,
-        .memory = malloc(arena.capacity),
-        .address = arena.memory,
-        .cur_size = 0
-    };
+    Arena arena = {0};
+    arena.capacity = arena_size;
+    arena.memory = malloc(arena.capacity);
     if(arena.memory == NULL){
         perror("Error allocating memory\n");
         exit(-1);
     }
+    arena.address = arena.memory;
+    arena.cur_size = 0;
     return arena;
 }
 
