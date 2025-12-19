@@ -1,20 +1,25 @@
 #include "lib3man.h"
+#include <stddef.h>
+#include <unistd.h>
 
-void create_Arena(Arena * arena){
-    arena->capacity = 5 * 1024 * 1024; // 5mb
-    arena->memory = malloc(arena->capacity);
-    if(arena->memory == NULL){
+Arena create_Arena(size_t arena_size){
+    Arena arena = {
+        .capacity = arena_size,
+        .memory = malloc(arena.capacity),
+        .address = arena.memory,
+        .cur_size = 0
+    };
+    if(arena.memory == NULL){
         perror("Error allocating memory\n");
         exit(-1);
     }
-    arena->address = arena->memory;
-    arena->cur_size = 0;
+    return arena;
 }
 
 
 void * arena_Alloc(Arena * arena, size_t size){
     void * ptr = NULL;
-    if(arena->memory == NULL)create_Arena(arena);
+    if(arena->memory == NULL) return NULL;
     if(arena->cur_size + size < arena->capacity){
         ptr = arena->address;
         arena->address =  (char *)arena->address + size;

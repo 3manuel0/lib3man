@@ -14,7 +14,12 @@ typedef struct {
   size_t cur_size;
 } Arena;
 
-void create_Arena(Arena *arena);
+typedef struct Arenas {
+  Arena *arena;
+  struct Arenas *next;
+} Arenas;
+
+Arena create_Arena(size_t arena_size);
 void *arena_Alloc(Arena *arena, size_t size);
 void arena_reset(Arena *arena);
 void arena_free(Arena *arena);

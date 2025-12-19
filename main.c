@@ -2,7 +2,7 @@
 #include <string.h>
 
 int main(){
-    Arena arena;
+    Arena arena = create_Arena(5 * 1024);
     char * str = "testing testing 123\n";
     int str_len = strlen(str);
     char * s = arena_Alloc(&arena,str_len);
