@@ -1,13 +1,13 @@
-#include "lib3man.h"
+#include "../includes/lib3man.h"
 
-str_t str_t_from_const(const char * s){
+string string_from_const(const char * s){
     size_t size = strlen(s);
     char * t = malloc(size);
     memcpy(t, s, size);
-    return (str_t){t, size};
+    return (string){t, size};
 }
 
-str_t str_t_append(str_t *a, str_t *b){
+string string_append(string *a, string *b){
     size_t newlen = a->len + b->len;
     char * temp = malloc(newlen);
     size_t offst = 0;
@@ -29,7 +29,7 @@ str_t str_t_append(str_t *a, str_t *b){
     return *a;
 }
 
-void str_t_free(str_t * s){
+void string_free(string * s){
     if(s->str == NULL){
         s->len = 0;
         return;
@@ -39,7 +39,11 @@ void str_t_free(str_t * s){
     s->len = 0;
 }
 
-void str_t_print(str_t s){
+void string_println(string s){
     write(1, (char *)s.str, s.len);
     write(1, "\n", 1);
+}
+
+void string_print(string s){
+    write(1, (char *)s.str, s.len);
 }

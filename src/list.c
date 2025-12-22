@@ -1,4 +1,4 @@
-#include "lib3man.h"
+#include "../includes/lib3man.h"
 
 void list_push(list * node, int value){
     list * head = node;

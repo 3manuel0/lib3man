@@ -1,12 +1,17 @@
 #ifndef LIB_3MAN
 #define LIB_3MAN
-#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-// Arena allocator
+// Arena allocator ####################################################
+
+#define KiB(x) ((uint64_t)(x) << 10)
+#define MiB(x) ((uint64_t)(x) << 20)
+#define GiB(x) ((uint64_t)(x) << 30)
+
 typedef struct {
   void *memory;
   void *address;
@@ -23,9 +28,10 @@ Arena create_Arena(size_t arena_size);
 void *arena_Alloc(Arena *arena, size_t size);
 void arena_reset(Arena *arena);
 void arena_free(Arena *arena);
-// end of arena allocator
 
-// dynamic Array
+// end of arena allocator ###########################################
+
+// dynamic Array ##############################################################
 #define CREATE_ARR(type, name)                                                 \
   typedef struct {                                                             \
     type *data;                                                                \
@@ -63,10 +69,12 @@ void arena_free(Arena *arena);
     arr->capacity = 0;                                                         \
     arr->size = 0;                                                             \
   }                                                                            \
-  // end of dynamic Array
+  // end of dynamic Array ####################################################
 
-// linked list
+// linked list#################################################################
 
+/* just testing should make it dynamicly typed maybe I will
+use (void *) or macros like the dynamic array */
 typedef struct list {
   int data;
   struct list *next;
@@ -78,23 +86,27 @@ void print_list(list *head);
 
 void free_list(list *head);
 
-// end of linked list
+// end of linked list ##################################################
 
-// first attempt at a length base string
+// first attempt at a length base string ###############################
 
 typedef struct {
   char *str;
   size_t len;
-} str_t;
+} string;
 
-str_t str_t_from_const(const char *s);
+#define string_from_lit(str) (string){str, sizeof(str) - 1}
 
-str_t str_t_append(str_t *a, str_t *b);
+string string_from_const(const char *s);
 
-void str_t_free(str_t *s);
+string string_append(string *a, string *b);
 
-void str_t_print(str_t s);
+void string_free(string *s);
 
-// end of length base string
+void string_println(string s); // prints the string with \n new line at the end
+
+void string_print(string s);
+
+// end of length base string ###############################################
 
 #endif
