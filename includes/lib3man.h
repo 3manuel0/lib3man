@@ -6,12 +6,13 @@
 #include <string.h>
 #include <unistd.h>
 
-// Arena allocator ####################################################
+// Arena allocator #########################################################
 
 #define KiB(x) ((uint64_t)(x) << 10)
 #define MiB(x) ((uint64_t)(x) << 20)
 #define GiB(x) ((uint64_t)(x) << 30)
 
+// single arena
 typedef struct {
   void *memory;
   void *address;
@@ -19,8 +20,9 @@ typedef struct {
   size_t cur_size;
 } Arena;
 
+// for multiple arenas (linked list of arenas)
 typedef struct Arenas {
-  Arena *arena;
+  Arena arena;
   struct Arenas *next;
 } Arenas;
 
@@ -29,7 +31,11 @@ void *arena_Alloc(Arena *arena, size_t size);
 void arena_reset(Arena *arena);
 void arena_free(Arena *arena);
 
-// end of arena allocator ###########################################
+// for multiple arenas (linked list of arenas)
+void *arenas_Alloc(Arenas *arenas, size_t size);
+void arenas_free(Arenas *head);
+
+// end of arena allocator #####################################################
 
 // dynamic Array ##############################################################
 #define CREATE_ARR(type, name)                                                 \

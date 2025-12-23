@@ -1,4 +1,5 @@
 #include "../includes/lib3man.h"
+#include <stdlib.h>
 
 Arena create_Arena(size_t arena_size){
     Arena arena = {0};
@@ -43,4 +44,27 @@ void arena_free(Arena * arena){
     arena->address = NULL;
     arena->capacity = 0;
     arena->cur_size = 0;
+}
+
+// linked list of arenas in case the first arena got full
+//  so we can deallocat everything in the end
+void *arenas_Alloc(Arenas *arenas, size_t size){
+    if(arenas->arena.capacity > arenas->arena.cur_size + size){
+        return arena_Alloc(&arenas->arena, size);
+    }else{
+        arenas->next = malloc(sizeof(Arenas));
+        arenas = arenas->next;
+        arenas->arena = create_Arena(MiB(5));
+        arenas->next = NULL;
+        return arena_Alloc(&arenas->arena, size);
+    }
+}
+
+// free all the arenas we created
+void arenas_free(Arenas * head){
+    while (head != NULL) {
+        Arenas * temp = head;
+        head = head->next;
+        free(temp);
+    }
 }
