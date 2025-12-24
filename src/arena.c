@@ -53,8 +53,9 @@ void *arenas_Alloc(Arenas *arenas, size_t size){
         return arena_Alloc(&arenas->arena, size);
     }else{
         arenas->next = malloc(sizeof(Arenas));
+        size_t capacity = arenas->arena.capacity;
         arenas = arenas->next;
-        arenas->arena = create_Arena(MiB(5));
+        arenas->arena = create_Arena(capacity);
         arenas->next = NULL;
         return arena_Alloc(&arenas->arena, size);
     }

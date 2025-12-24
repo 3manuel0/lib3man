@@ -1,11 +1,13 @@
 #include "includes/lib3man.h"
 
 int main(){
-    Arena arena = create_Arena(MiB(5));
+    Arena arena = create_Arena(MiB(2));
 
     char * str = "testing testing 123\n";
 
     string d = string_from_lit("anger builds");
+
+    string_println(d);
 
     printf("%zu %s", d.len, d.str);
 

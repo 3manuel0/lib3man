@@ -38,6 +38,7 @@ void arenas_free(Arenas *head);
 // end of arena allocator #####################################################
 
 // dynamic Array ##############################################################
+
 #define CREATE_ARR(type, name)                                                 \
   typedef struct {                                                             \
     type *data;                                                                \
@@ -74,8 +75,9 @@ void arenas_free(Arenas *head);
     free(arr->data);                                                           \
     arr->capacity = 0;                                                         \
     arr->size = 0;                                                             \
-  }                                                                            \
-  // end of dynamic Array ####################################################
+  }
+
+// end of dynamic Array ####################################################
 
 // linked list#################################################################
 
@@ -94,24 +96,30 @@ void free_list(list *head);
 
 // end of linked list ##################################################
 
-// first attempt at a length base string ###############################
+// length-base string ##################################################
 
 typedef struct {
   char *str;
   size_t len;
 } string;
 
+enum { str_fail = -1, str_succ, str_err };
+
 #define string_from_lit(str) (string){str, sizeof(str) - 1}
 
-string string_from_const(const char *s);
+string string_from_buffer(const char *s);
 
-string string_append(string *a, string *b);
+int string_append(string *a, string *b);
 
-void string_free(string *s);
+string string_append_arena(Arena *arena, string *a, string *b);
+
+string arena_string_from_mem(Arena *arena, char *str);
 
 void string_println(string s); // prints the string with \n new line at the end
 
-void string_print(string s);
+void string_print(string s); // prints the string without new line
+
+void string_free(string *s);
 
 // end of length base string ###############################################
 

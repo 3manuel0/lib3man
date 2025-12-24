@@ -1,23 +1,30 @@
 #include "../includes/lib3man.h"
 
-string string_from_const(const char * s){
+// creating a string from buffer 
+string string_from_buffer(const char *s){
     size_t size = strlen(s);
-    char * t = malloc(size);
-    memcpy(t, s, size);
-    return (string){t, size};
+    char * str = malloc(size);
+
+    memcpy(str, s, size);
+
+    return (string){str, size};
 }
 
-string string_append(string *a, string *b){
+int string_append(string *a, string *b){
+
+    if(a->len == 0 
+    || a->str == NULL 
+    || b->str == NULL 
+    || b->len == 0) return str_err;
+
     size_t newlen = a->len + b->len;
     char * temp = malloc(newlen);
     size_t offst = 0;
-    for(; offst < a->len; offst++){
-        temp[offst] = a->str[offst];
-    }
+
+    if(temp == NULL) return str_fail;
     
-    for(size_t i = 0; i < b->len; i++, offst++){
-        temp[offst] = b->str[i];
-    }
+    memcpy(temp, a->str, a->len);
+    memcpy(temp + a->len, b, b->len);
 
     free(b->str);
     b->len = 0;
@@ -26,10 +33,35 @@ string string_append(string *a, string *b){
     free(a->str);
     a->str = temp;
     a->len = newlen;
-    return *a;
+    return str_succ;
 }
 
-void string_free(string * s){
+string string_append_arena(Arena *arena, string *a, string *b){
+    char * str = arena_Alloc(arena, a->len + b->len);
+
+    if(str == NULL) return (string){ .str = NULL, .len = 0};
+
+    memcpy(str, a->str, a->len);
+    memcpy(str + a->len, b, b->len);
+
+    return (string){.str = str, .len = a->len + b->len};
+}
+
+int string_from_mem_to_arena(Arena *arena, string *s){
+
+    if(s->len == 0 || s->str == NULL) return str_err;
+
+    char * str = arena_Alloc(arena, s->len);
+
+    if(str == NULL) return str_fail;
+
+    free(s->str);
+    s->str = str;
+
+    return str_succ;
+}
+
+void string_free(string *s){
     if(s->str == NULL){
         s->len = 0;
         return;
