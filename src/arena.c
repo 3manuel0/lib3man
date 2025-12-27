@@ -46,6 +46,16 @@ void arena_free(Arena * arena){
     arena->cur_size = 0;
 }
 
+
+ArenaList *create_ArenaList(size_t size){
+    ArenaList * arenaList = malloc(sizeof(ArenaList));
+    arenaList->next = NULL;
+    if(arenaList == NULL) return NULL;
+    *arenaList = (ArenaList){.arena = create_Arena(size), .next = NULL};
+    return arenaList;
+}
+
+
 // linked list of arenas in case the first arena got full
 //  so we can deallocat everything in the end
 void *arenaList_Alloc(ArenaList *arenalist, size_t size){
@@ -66,6 +76,7 @@ void arenaList_free(ArenaList * head){
     while (head != NULL) {
         ArenaList * temp = head;
         head = head->next;
+        arena_free(&temp->arena);
         free(temp);
     }
 }

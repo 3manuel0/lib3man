@@ -41,6 +41,7 @@ void arena_reset(Arena *arena);
 void arena_free(Arena *arena);
 
 // for multiple Arenas (linked list of ArenaList)
+ArenaList *create_ArenaList(size_t size);
 void *arenaList_Alloc(ArenaList *arenalist, size_t size);
 void arenaList_free(ArenaList *head);
 
