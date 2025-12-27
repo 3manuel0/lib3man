@@ -1,48 +1,13 @@
 #include "includes/lib3man.h"
 
 int main(){
-    Arena arena = create_Arena(MiB(2));
+    ArenaList arenaList = (ArenaList){.arena = create_Arena(MiB(2)), .next = NULL};
 
     char * str = "testing testing 123\n";
 
-    string d = string_from_lit("anger builds");
-
-    string_println(d);
-
-    printf("%zu %s", d.len, d.str);
-
-    int str_len = strlen(str);
-
-    char * s = arena_Alloc(&arena,str_len);
-
-    memcpy(s, str, str_len);
-
-    s = arena_Alloc(&arena, strlen(str));
-
-    memcpy(s, str, str_len);
-
-    s = arena_Alloc(&arena, strlen(str));
-
-    memcpy(s, str, str_len);
-
-    s = arena_Alloc(&arena, strlen(str));
-
-    memcpy(s, str, str_len);
-
-    int a = 500;
-
-    int * n = arena_Alloc(&arena, sizeof(int));
-
-    memcpy(n, &a, sizeof(int));
-    
-    printf("%zu %zu\n", arena.cur_size, strlen(str) * 4);
-
-    for(size_t i = 0; i < arena.cur_size; i++){
-        if(*((char *)arena.memory + i) < 32 || *((char *)arena.memory + i) > 126)
-            printf(" %u ", *((unsigned char *)arena.memory + i));
-        else printf("%c", *((char *)arena.memory + i));
-    }
-
-    arena_free(&arena);
+    char * test = arenaList_Alloc(&arenaList, 500); 
+    char * a = arenaList_Alloc(&arenaList, 500);
+    char * b = arenaList_Alloc(&arenaList, 500);
+    printf("%ld", (size_t)arenaList.arena.memory - (size_t)arenaList.arena.address);
     return 0;
 }
