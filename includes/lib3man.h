@@ -15,8 +15,7 @@ typedef int32_t i32;
 typedef float f32;
 typedef double f64;
 
-// Arena allocator #########################################################
-
+// ############ Arena allocator ##############################################
 #define KiB(x) ((uint64_t)(x) << 10)
 #define MiB(x) ((uint64_t)(x) << 20)
 #define GiB(x) ((uint64_t)(x) << 30)
@@ -29,7 +28,7 @@ typedef struct {
   size_t cur_size;
 } Arena;
 
-// for multiple ArenaList (linked list of ArenaList)
+// for multiple ArenaList (linked list of Arenas)
 typedef struct ArenaList {
   Arena arena;
   struct ArenaList *next;
@@ -40,15 +39,14 @@ void *arena_Alloc(Arena *arena, size_t size);
 void arena_reset(Arena *arena);
 void arena_free(Arena *arena);
 
-// for multiple Arenas (linked list of ArenaList)
+// for multiple Arenas (linked list of Arenas)
 ArenaList *create_ArenaList(size_t size);
 void *arenaList_Alloc(ArenaList *arenalist, size_t size);
 void arenaList_free(ArenaList *head);
+// #############################################################################
 
-// end of arena allocator #####################################################
-
-// dynamic Array ##############################################################
-
+// ############ Dynamic Array #################################################
+// I kinda hate this macros TODO: find another way maybe void *                #
 #define CREATE_ARR(type, name)                                                 \
   typedef struct {                                                             \
     type *data;                                                                \
@@ -85,13 +83,11 @@ void arenaList_free(ArenaList *head);
     free(arr->data);                                                           \
     arr->capacity = 0;                                                         \
     arr->size = 0;                                                             \
-  }
+  } // #
+// #############################################################################
 
-// end of dynamic Array ####################################################
-
-// linked list#################################################################
-
-/* just testing should make it dynamicly typed maybe I will
+// ############ linked list ####################################################
+/* just testing, should make it dynamicly typed maybe I will
 use (void *) or macros like the dynamic array */
 typedef struct list {
   int data;
@@ -104,14 +100,15 @@ void print_list(list *head);
 
 void free_list(list *head);
 
-// end of linked list ##################################################
+// #############################################################################
 
-// length-base string ##################################################
-
+// ############ Length-Based String ############################################
 typedef struct {
   char *str;
   size_t len;
 } string;
+
+// TODO: string inside areanaList
 
 enum { str_fail = -1, str_succ, str_err };
 
@@ -125,12 +122,11 @@ string string_append_arena(Arena *arena, string *a, string *b);
 
 string arena_string_from_mem(Arena *arena, char *str);
 
-void string_println(string s); // prints the string with \n new line at the end
+void string_println(string s); // prints the string with new line(\n)
 
 void string_print(string s); // prints the string without new line
 
 void string_free(string *s);
-
-// end of length base string ###############################################
+// ##############################################################################
 
 #endif

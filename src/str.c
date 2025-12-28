@@ -1,5 +1,9 @@
 #include "../includes/lib3man.h"
 
+// TODO: string inside areanaList
+
+
+
 // creating a string from buffer 
 string string_from_buffer(const char *s){
     size_t size = strlen(s);
@@ -10,6 +14,7 @@ string string_from_buffer(const char *s){
     return (string){str, size};
 }
 
+// append 2 strings in the heap
 int string_append(string *a, string *b){
 
     if(a->len == 0 
@@ -36,6 +41,7 @@ int string_append(string *a, string *b){
     return str_succ;
 }
 
+// append 2 string in an arena
 string string_append_arena(Arena *arena, string *a, string *b){
     char * str = arena_Alloc(arena, a->len + b->len);
 
@@ -61,6 +67,9 @@ int string_from_mem_to_arena(Arena *arena, string *s){
     return str_succ;
 }
 
+// useful for only heap allocated strings
+// tbh I don't know what I'm doing maybe I would never need this 
+// since I use arenas
 void string_free(string *s){
     if(s->str == NULL){
         s->len = 0;
