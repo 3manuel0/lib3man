@@ -2,8 +2,6 @@
 
 // TODO: string inside areanaList
 
-
-
 // creating a string from buffer 
 string string_from_buffer(const char *s){
     size_t size = strlen(s);
@@ -87,4 +85,12 @@ void string_println(string s){
 
 void string_print(string s){
     write(1, (char *)s.str, s.len);
+}
+
+int string_cmp(const string *s1, const string *s2){
+    if(s1->len != s2->len) return false;
+    for(size_t i = 0; i < s1->len; i++){
+        if(s1->str[i] != s2->str[i]) return false;
+    }
+    return true;
 }

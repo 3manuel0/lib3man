@@ -15,6 +15,9 @@ typedef int32_t i32;
 typedef float f32;
 typedef double f64;
 
+#define false 0
+#define true 1
+
 // ############ Arena allocator ##############################################
 #define KiB(x) ((uint64_t)(x) << 10)
 #define MiB(x) ((uint64_t)(x) << 20)
@@ -121,6 +124,8 @@ int string_append(string *a, string *b);
 string string_append_arena(Arena *arena, string *a, string *b);
 
 string arena_string_from_mem(Arena *arena, char *str);
+
+int string_cmp(const string *s1, const string *s2); // compare 2 strings
 
 void string_println(string s); // prints the string with new line(\n)
 
