@@ -108,10 +108,8 @@ enum { str_fail = -1, str_succ, str_err };
 
 #define string_v_from_lit(str) (string_v){str, sizeof(str) - 1}
 
-#define string_b_from_lit(str) (string_b){str, sizeof(str) - 1, (sizeof(str) - 1) * 4}
-
 // string-view functions
-const string_v string_v_fcharp(const char *str, size_t len);
+string_v string_v_fcharp(const char *str, size_t len);
 
 int string_v_cmp(const string_v *s1, const string_v *s2); // compare 2 string_vs
 
@@ -121,6 +119,8 @@ void string_v_print(const string_v *s); // prints without new line
 
 // string_buffer functions :
 string_b *string_b_cat(string_b *dest, string_b *src);
+
+string_b string_b_from_string_v(const string_v *str);
 
 void string_b_free(string_b *dest);
 

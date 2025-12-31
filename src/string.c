@@ -10,7 +10,7 @@
 
 // string View functions ##################################################################
 // creating a string_v from char *
-const string_v string_v_fcharp(const char *str, size_t len){
+string_v string_v_fcharp(const char *str, size_t len){
     if(str == NULL) return (string_v){.str = NULL, .len = 0};
     return (string_v){.str = (char*) str, .len = len};
 }
@@ -58,6 +58,15 @@ string_b *string_b_cat(string_b *dest, string_b  *src){
     dest->len += src->len;
     return dest;
 }
+
+string_b string_b_from_string_v(const string_v *s){
+    if(s->len == 0 || s->str == NULL) 
+        return (string_b){.str = NULL, .len = 0, .cap = 0};
+    char * temp = malloc(s->len * 4);
+    memcpy(temp, s->str, s->len);
+    return (string_b){.str = temp, .len = s->len, .cap = s->len*4};
+}
+
 
 void string_b_free(string_b *dest){
     free(dest->str);

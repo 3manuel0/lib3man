@@ -1,12 +1,8 @@
 #include "includes/lib3man.h"
-#include <stdlib.h>
 
 int main(){
-    ArenaList * arenaList = create_ArenaList(MiB(2));
-    char * test = arenaList_Alloc(arenaList, 500); 
-    char * a = arenaList_Alloc(arenaList, 500);
-    char * b = arenaList_Alloc(arenaList, 500);
-    printf("%ld", (size_t)arenaList->arena.memory - (size_t)arenaList->arena.address);
-    arenaList_free(arenaList);
+    string_b s = string_b_from_string_v(&string_v_from_lit("anger builds"));
+    printf("cap:%zu len:%zu\n", s.cap, s.len);
+    string_v_println((string_v*)&s);
     return 0;
 }
