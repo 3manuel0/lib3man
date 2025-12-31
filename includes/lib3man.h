@@ -89,49 +89,41 @@ void arenaList_free(ArenaList *head);
   } // #
 // #############################################################################
 
-// ############ linked list ####################################################
-/* just testing, should make it dynamicly typed maybe I will
-use (void *) or macros like the dynamic array */
-typedef struct list {
-  int data;
-  struct list *next;
-} list;
-
-void list_push(list *node, int value);
-
-void print_list(list *head);
-
-void free_list(list *head);
-
-// #############################################################################
-
-// ############ Length-Based String ############################################
+// ############ Length-Based string and dynamicly allocated string #############
 typedef struct {
   char *str;
   size_t len;
-} string;
+} string_view;
 
-// TODO: string inside areanaList
+typedef struct {
+  char *str;
+  size_t len;
+  size_t cap;
+} string_buffer;
+
+typedef string_view string_v;
+typedef string_buffer string_b;
 
 enum { str_fail = -1, str_succ, str_err };
 
-#define string_from_lit(str) (string){str, sizeof(str) - 1}
+#define string_v_from_lit(str) (string_v){str, sizeof(str) - 1}
 
-string string_from_buffer(const char *s);
+#define string_b_from_lit(str) (string_b){str, sizeof(str) - 1, (sizeof(str) - 1) * 4}
 
-int string_append(string *a, string *b);
+// string-view functions
+const string_v string_v_fcharp(const char *str, size_t len);
 
-string string_append_arena(Arena *arena, string *a, string *b);
+int string_v_cmp(const string_v *s1, const string_v *s2); // compare 2 string_vs
 
-string arena_string_from_mem(Arena *arena, char *str);
+void string_v_println(const string_v *s); // prints with new line(\n)
 
-int string_cmp(const string *s1, const string *s2); // compare 2 strings
+void string_v_print(const string_v *s); // prints without new line
 
-void string_println(string s); // prints the string with new line(\n)
+// string_buffer functions :
+string_b *string_b_cat(string_b *dest, string_b *src);
 
-void string_print(string s); // prints the string without new line
+void string_b_free(string_b *dest);
 
-void string_free(string *s);
 // ##############################################################################
 
 #endif
