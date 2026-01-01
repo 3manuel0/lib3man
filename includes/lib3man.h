@@ -118,12 +118,17 @@ void string_v_println(const string_v *s); // prints with new line(\n)
 void string_v_print(const string_v *s); // prints without new line
 
 // string_buffer functions :
+string_b create_string_b_fchar(const char *s);
+
 string_b *string_b_cat(string_b *dest, string_b *src);
 
-string_b string_b_from_string_v(const string_v *str);
+string_b string_b_fstring_v(const string_v *str);
+
+void string_b_println(const string_b *s); // prints with new line(\n)
+
+void string_b_print(const string_b *s); // prints without new line
 
 void string_b_free(string_b *dest);
-
 // ##############################################################################
 
 #endif

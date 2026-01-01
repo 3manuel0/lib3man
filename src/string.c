@@ -34,6 +34,27 @@ void string_v_print(const string_v *s){
 
 
 // string buffer functions ##################################################################
+
+string_b create_string_b_fchar(const char *s){
+    if(s == NULL) return (string_b){.str = NULL, .len = 0, .cap = 0};
+
+    size_t len = strlen(s);
+    size_t cap = len * 4;
+    char *temp = malloc(cap);
+
+    return (string_b){.str = temp, .len = len, .cap = cap};
+}
+
+string_b string_b_fstring_v(const string_v *s){
+    if(s->len == 0 || s->str == NULL) 
+        return (string_b){.str = NULL, .len = 0, .cap = 0};
+
+    char * temp = malloc(s->len * 4);
+    memcpy(temp, s->str, s->len);
+    
+    return (string_b){.str = temp, .len = s->len, .cap = s->len*4};
+}
+
 string_b *string_b_cat(string_b *dest, string_b  *src){
     if(dest->len == 0 
     || src->str == NULL 
@@ -59,14 +80,22 @@ string_b *string_b_cat(string_b *dest, string_b  *src){
     return dest;
 }
 
-string_b string_b_from_string_v(const string_v *s){
-    if(s->len == 0 || s->str == NULL) 
-        return (string_b){.str = NULL, .len = 0, .cap = 0};
-    char * temp = malloc(s->len * 4);
-    memcpy(temp, s->str, s->len);
-    return (string_b){.str = temp, .len = s->len, .cap = s->len*4};
+void string_b_println(const string_b *s){
+    if(s->str == NULL){
+        write(1, "empty\n", 6);
+        return;
+    }
+    write(1, s->str, s->len);
+    write(1, "\n", 1);
 }
 
+void string_b_print(const string_b *s){
+    if(s->str == NULL){
+        write(1, "empty", 5);
+        return;
+    }
+    write(1, s->str, s->len);
+}
 
 void string_b_free(string_b *dest){
     free(dest->str);
