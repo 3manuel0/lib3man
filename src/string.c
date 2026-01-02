@@ -1,10 +1,6 @@
 #include "../includes/lib3man.h"
 #include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <sys/ucontext.h>
-#include <unistd.h>
 
 // TODO: string_v inside areanaList
 
@@ -34,7 +30,7 @@ void string_v_print(const string_v *s){
 
 
 // string buffer functions ##################################################################
-
+// creating a string_b from char *
 string_b create_string_b_fchar(const char *s){
     if(s == NULL) return (string_b){.str = NULL, .len = 0, .cap = 0};
 
@@ -78,6 +74,97 @@ string_b *string_b_cat(string_b *dest, string_b  *src){
     memcpy(&dest->str[dest->len],src->str , src->len);
     dest->len += src->len;
     return dest;
+}
+
+int string_b_push_string_v(string_b *sb, const string_v *sv){
+    if(sb == NULL || sv == NULL){
+        fprintf(stderr, "Erorr, NULL Pointer\n");
+        return str_err;
+    }
+
+    if(sb->str == NULL || sv->str == NULL || sb->cap == 0){
+        fprintf(stderr, "Erorr, Invalid strings\n");
+        return str_err;
+    }
+
+    if(sb->cap > sb->len + sv->len){
+        memcpy(sb->str+sb->len, sv->str, sv->len);
+        sb->len += sv->len;
+    }else{
+        size_t temp_cap = sb->cap * 2;
+        char * s  = realloc(sb->str, sb->cap);
+        if(s == NULL){
+            fprintf(stderr, "Erorr, Realocation Failed\n");
+            return str_fail;
+        }
+        sb->cap = temp_cap;
+        sb->str = s;
+        memcpy(sb->str+sb->len, sv->str, sv->len);
+        sb->len += sv->len;
+    }
+
+    return str_succ;
+}
+
+int string_b_push_str(string_b *sb, const char *str){
+    if(sb == NULL || str == NULL){
+        fprintf(stderr, "Erorr, NULL Pointer\n");
+        return str_err;
+    }
+
+    if(sb->str == NULL || sb->cap == 0){
+        fprintf(stderr, "Erorr, Invalid String Buffer\n");
+        return str_err;
+    }
+
+    size_t str_len = strlen(str);
+    if(sb->cap > sb->len + str_len){
+        memcpy(sb->str+sb->len, str, str_len);
+        sb->len += str_len;
+    }else{
+        size_t temp_cap = sb->cap * 2;
+        char * s  = realloc(sb->str, sb->cap);
+        if(s == NULL){
+            fprintf(stderr, "Erorr, Realocation Failed\n");
+            return str_fail;
+        }
+        sb->cap = temp_cap;
+        sb->str = s;
+        memcpy(sb->str+sb->len, str, str_len);
+        sb->len += str_len;
+    }
+
+    return str_succ;
+}
+
+int string_b_push_sstr(string_b *sb, const char *str, size_t size){
+    if(sb == NULL || str == NULL){
+        fprintf(stderr, "Erorr, NULL Pointer\n");
+        return str_err;
+    }
+
+    if(sb->str == NULL || sb->cap == 0){
+        fprintf(stderr, "Erorr, Invalid String Buffer\n");
+        return str_err;
+    }
+
+    if(sb->cap > sb->len + size){
+        memcpy(sb->str+sb->len, str, size);
+        sb->len += size;
+    }else{
+        size_t temp_cap = sb->cap * 2;
+        char * s  = realloc(sb->str, sb->cap);
+        if(s == NULL){
+            fprintf(stderr, "Erorr, Realocation Failed\n");
+            return str_fail;
+        }
+        sb->cap = temp_cap;
+        sb->str = s;
+        memcpy(sb->str+sb->len, str, size);
+        sb->len += size;
+    }
+
+    return str_succ;
 }
 
 void string_b_println(const string_b *s){

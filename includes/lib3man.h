@@ -1,5 +1,6 @@
 #ifndef LIB_3MAN
 #define LIB_3MAN
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -123,6 +124,12 @@ string_b create_string_b_fchar(const char *s);
 string_b *string_b_cat(string_b *dest, string_b *src);
 
 string_b string_b_fstring_v(const string_v *str);
+
+int string_b_push_string_v(string_b *sb, const string_v *sv);
+
+int string_b_push_str(string_b *sb, const char *str);
+
+int string_b_push_sstr(string_b *sb, const char *str, size_t size);
 
 void string_b_println(const string_b *s); // prints with new line(\n)
 
