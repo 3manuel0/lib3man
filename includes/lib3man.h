@@ -102,40 +102,42 @@ typedef struct {
   size_t cap;
 } string_buffer;
 
-typedef string_view string_v;
-typedef string_buffer string_b;
+typedef string_view strview;
+typedef string_buffer strbuf;
 
 enum { str_fail = -1, str_succ, str_err };
 
-#define string_v_from_lit(str) (string_v){str, sizeof(str) - 1}
+#define strview_from_lit(str) (strview){str, sizeof(str) - 1}
 
 // string-view functions
-string_v string_v_fcharp(const char *str, size_t len);
+strview strview_fcharp(const char *str, size_t len);
 
-int string_v_cmp(const string_v *s1, const string_v *s2); // compare 2 string_vs
+int strview_cmp(const strview *s1, const strview *s2); // compare 2 strviews
 
-void string_v_println(const string_v *s); // prints with new line(\n)
+void strview_println(const strview *s); // prints with new line(\n)
 
-void string_v_print(const string_v *s); // prints without new line
+void strview_print(const strview *s); // prints without new line
 
 // string_buffer functions :
-string_b string_b_fchar(const char *s);
+strbuf strbuf_fcstr(const char *s);// string buffer from C_string (char *, Null terminated)
 
-string_b *string_b_cat(string_b *dest, string_b *src);
+strbuf *strbuf_cat(strbuf *dest, strbuf *src);
 
-string_b string_b_fstring_v(const string_v *str);
+strbuf strbuf_fstrview(const strview *str);
 
-int string_b_push_string_v(string_b *sb, const string_v *sv);
+int strbuf_push_strview(strbuf *sb, const strview *sv);
 
-int string_b_push_str(string_b *sb, const char *str);
+int strbuf_push_str(strbuf *sb, const char *str);
 
-int string_b_push_sstr(string_b *sb, const char *str, size_t size);
+int strbuf_push_szstr(strbuf *sb, const char *str, size_t size);
 
-void string_b_println(const string_b *s); // prints with new line(\n)
+int strbuf_push_char(strbuf *sb, char ch);
 
-void string_b_print(const string_b *s); // prints without new line
+void strbuf_println(const strbuf *s); // prints with new line(\n)
 
-void string_b_free(string_b *dest);
+void strbuf_print(const strbuf *s); // prints without new line
+
+void strbuf_free(strbuf *dest);
 // ##############################################################################
 
 #endif
