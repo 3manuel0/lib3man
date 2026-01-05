@@ -6,8 +6,8 @@ It includes some basic data structures :
 
 - Memory arenas
 - Arena-list (for managing multiple arenas)
-- Length-based string (string view)
-- Dynamically allocated strings (string buffer)
+- Length-based string (string view (strview))
+- Dynamically allocated strings (string buffer (strbuf))
 
 #### Goals
 
