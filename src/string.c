@@ -43,7 +43,7 @@ void strview_print(const strview *s){
 // TODO: strbuf inside areana and arenaList
 
 // creating a strbuf from char *
-strbuf strbuf_fchar(const char *s){
+strbuf strbuf_fcstr(const char *s){
     if(s == NULL) return (strbuf){.str = NULL, .len = 0, .cap = 0};
 
     size_t len = strlen(s);
@@ -56,22 +56,6 @@ strbuf strbuf_fchar(const char *s){
     }
 
     return (strbuf){.str = temp, .len = len, .cap = cap};
-}
-
-strbuf strbuf_fstrview(const strview *s){
-    if(s->len == 0 || s->str == NULL) 
-        return (strbuf){.str = NULL, .len = 0, .cap = 0};
-
-    char * temp = malloc(s->len * 4);
-
-    if(temp == NULL){
-        fprintf(stderr, "Error, Allocation Failed");
-        return (strbuf){.str = NULL, .len = 0, .cap = 0};
-    }
-
-    memcpy(temp, s->str, s->len);
-    
-    return (strbuf){.str = temp, .len = s->len, .cap = s->len*4};
 }
 
 strbuf *strbuf_cat(strbuf *dest, strbuf  *src){
@@ -97,6 +81,22 @@ strbuf *strbuf_cat(strbuf *dest, strbuf  *src){
     memcpy(&dest->str[dest->len],src->str , src->len);
     dest->len += src->len;
     return dest;
+}
+
+strbuf strbuf_fstrview(const strview *s){
+    if(s->len == 0 || s->str == NULL) 
+        return (strbuf){.str = NULL, .len = 0, .cap = 0};
+
+    char * temp = malloc(s->len * 4);
+
+    if(temp == NULL){
+        fprintf(stderr, "Error, Allocation Failed");
+        return (strbuf){.str = NULL, .len = 0, .cap = 0};
+    }
+
+    memcpy(temp, s->str, s->len);
+    
+    return (strbuf){.str = temp, .len = s->len, .cap = s->len*4};
 }
 
 int strbuf_push_strview(strbuf *sb, const strview *sv){
@@ -187,6 +187,25 @@ int strbuf_push_szstr(strbuf *sb, const char *str, size_t size){
         sb->len += size;
     }
 
+    return str_succ;
+}
+
+int strbuf_push_char(strbuf *sb, char ch){
+    if(sb->cap > sb->len + 1){
+        sb->str[sb->len] = ch;
+        sb->len++;
+    }else{
+        size_t temp_cap = sb->cap * 2;
+        char * temp  = realloc(sb->str, sb->cap);
+        if(temp == NULL){
+            fprintf(stderr, "Erorr, Realocation Failed\n");
+            return str_fail;
+        }
+        sb->str = temp;
+        sb->str[sb->len] = ch;
+        sb->len++;
+        sb->cap = temp_cap;
+    }
     return str_succ;
 }
 
