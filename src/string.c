@@ -58,6 +58,18 @@ strbuf strbuf_fcstr(const char *s){
     return (strbuf){.str = temp, .len = len, .cap = cap};
 }
 
+strbuf strbuf_arenaList_cstrsz(ArenaList *arenaList, const char *s, size_t len){
+    size_t cap = len * 4;
+    char *temp = arenaList_Alloc(arenaList, cap);
+
+    if(temp == NULL){
+        fprintf(stderr, "Error, Allocation Failed");
+        return (strbuf){.str = NULL, .len = 0, .cap = 0};
+    }
+
+    return (strbuf){.str = temp, .len = len, .cap = cap};
+}
+
 strbuf *strbuf_cat(strbuf *dest, strbuf  *src){
     if(dest->len == 0 
     || src->str == NULL 
