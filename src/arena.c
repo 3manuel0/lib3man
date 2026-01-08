@@ -14,7 +14,6 @@ Arena create_Arena(size_t arena_size){
     return arena;
 }
 
-
 void * arena_Alloc(Arena * arena, size_t size){
     void * ptr = NULL;
     if(arena->memory == NULL) return NULL;
@@ -28,6 +27,12 @@ void * arena_Alloc(Arena * arena, size_t size){
     }
     return ptr;
 }
+
+// TODO : finish arena_Realloc 
+
+// void *arena_Realloc(Arena * arena, void *p, size_t oldsz , size_t newsz){
+
+// }
 
 void arena_reset(Arena * arena){
     // restart the arena writing 

@@ -40,6 +40,7 @@ typedef struct ArenaList {
 
 Arena create_Arena(size_t arena_size);
 void *arena_Alloc(Arena *arena, size_t size);
+void *arena_Realloc(Arena * arena, size_t size);
 void arena_reset(Arena *arena);
 void arena_free(Arena *arena);
 
@@ -120,6 +121,8 @@ void strview_print(const strview *s); // prints without new line
 
 // string_buffer functions :
 strbuf strbuf_fcstr(const char *s);// string buffer from C_string (char *, Null terminated)
+
+strbuf strbuf_arenaList_cstrsz(ArenaList *arenaList, const char *s, size_t len);
 
 strbuf *strbuf_cat(strbuf *dest, strbuf *src);
 
