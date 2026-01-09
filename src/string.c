@@ -1,10 +1,13 @@
 #include "../includes/lib3man.h"
 
+// Importent replaced wirte with fwrite :
+// 1- for buffering meaning printing is faster
+// 2- compatibility with windows 
 // TODO: strview inside areanaList
 
 // string View functions ##################################################################
-// creating a strview from char *
-strview strview_fcharp(const char *str, size_t len){
+// creating a strview from const char *
+strview strview_fcstr(const char *str, size_t len){
     if(str == NULL) return (strview){.str = NULL, .len = 0};
     return (strview){.str = (char*) str, .len = len};
 }
@@ -61,12 +64,11 @@ strbuf strbuf_fcstr(const char *s){
 strbuf strbuf_arenaList_cstrsz(ArenaList *arenaList, const char *s, size_t len){
     size_t cap = len * 4;
     char *temp = arenaList_Alloc(arenaList, cap);
-
     if(temp == NULL){
         fprintf(stderr, "Error, Allocation Failed");
         return (strbuf){.str = NULL, .len = 0, .cap = 0};
     }
-
+    memcpy(temp, s, len);
     return (strbuf){.str = temp, .len = len, .cap = cap};
 }
 
@@ -141,7 +143,7 @@ int strbuf_push_strview(strbuf *sb, const strview *sv){
     return str_succ;
 }
 
-int strbuf_push_str(strbuf *sb, const char *str){
+int strbuf_push_cstr(strbuf *sb, const char *str){
     if(sb == NULL || str == NULL){
         fprintf(stderr, "Erorr, NULL Pointer\n");
         return str_err;
@@ -172,7 +174,7 @@ int strbuf_push_str(strbuf *sb, const char *str){
     return str_succ;
 }
 
-int strbuf_push_szstr(strbuf *sb, const char *str, size_t size){
+int strbuf_push_cstrsz(strbuf *sb, const char *str, size_t size){
     if(sb == NULL || str == NULL){
         fprintf(stderr, "Erorr, NULL Pointer\n");
         return str_err;
@@ -221,28 +223,28 @@ int strbuf_push_char(strbuf *sb, char ch){
     return str_succ;
 }
 
-void strbuf_println(const strbuf *s){
-    if(s->str == NULL){
+void strbuf_println(const strbuf *sb){
+    if(sb->str == NULL){
         // write(1, "empty\n", 6);
         fwrite("empty\n", 1, 6, stdout);
         return;
     }
-    fwrite(s->str, 1, s->len,stdout);
+    fwrite(sb->str, 1, sb->len,stdout);
     fwrite("\n", 1, 1,stdout);
 }
 
-void strbuf_print(const strbuf *s){
-    if(s->str == NULL){
+void strbuf_print(const strbuf *sb){
+    if(sb->str == NULL){
         // write(1, "empty", 5);
         fwrite("empty", 1, 5, stdout);
         return;
     }
     // write(1, s->str, s->len);
-    fwrite(s->str, 1, s->len,stdout);
+    fwrite(sb->str, 1, sb->len,stdout);
 }
 
-void strbuf_free(strbuf *dest){
-    free(dest->str);
-    dest->cap = 0;
-    dest->len = 0;
+void strbuf_free(strbuf *sb){
+    free(sb->str);
+    sb->cap = 0;
+    sb->len = 0;
 }

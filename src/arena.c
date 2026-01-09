@@ -1,5 +1,4 @@
 #include "../includes/lib3man.h"
-#include <stdlib.h>
 
 Arena create_Arena(size_t arena_size){
     Arena arena = {0};
@@ -27,12 +26,6 @@ void * arena_Alloc(Arena * arena, size_t size){
     }
     return ptr;
 }
-
-// TODO : finish arena_Realloc 
-
-// void *arena_Realloc(Arena * arena, void *p, size_t oldsz , size_t newsz){
-
-// }
 
 void arena_reset(Arena * arena){
     // restart the arena writing 
@@ -73,6 +66,24 @@ void *arenaList_Alloc(ArenaList *arenalist, size_t size){
         arenalist->arena = create_Arena(capacity);
         arenalist->next = NULL;
         return arena_Alloc(&arenalist->arena, size);
+    }
+}
+
+void *arenaList_Realloc(ArenaList * arenaList, void *p, size_t oldsz , size_t newsz){
+    assert(arenaList != NULL && p != NULL);
+    assert(newsz > oldsz && "new size is less or equals old size");
+    size_t diff = newsz - oldsz;
+
+    if((char *)p + oldsz == arenaList->arena.address && \
+        arenaList->arena.cur_size + diff <= arenaList->arena.capacity)
+    {
+        arenaList->arena.address = (char *)arenaList->arena.address + diff;
+        arenaList->arena.cur_size += diff;
+        return p;
+    }else{
+        void *temp = arenaList_Alloc(arenaList, newsz);
+        memcpy(temp, p, oldsz);
+        return temp;
     }
 }
 

@@ -1,4 +1,5 @@
 #include "includes/lib3man.h"
+#include <stdio.h>
 
 int main(){
     // TODO : test string strbuf_push_str and sstr
@@ -13,7 +14,6 @@ int main(){
     // 310 <-> 298 write
     // 182 <-> 160 fwrite fwrite is faster 
     ArenaList *a = create_ArenaList(MiB(250));
-
     strbuf test = strbuf_arenaList_cstrsz(a, "anger builds\n", 13);
     strbuf_print(&test);
     return 0;
