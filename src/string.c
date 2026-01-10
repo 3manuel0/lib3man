@@ -1,5 +1,6 @@
 #include "../includes/lib3man.h"
 #include <assert.h>
+#include <string.h>
 
 // Importent replaced wirte with fwrite :
 // 1- for buffering meaning printing is faster
@@ -61,23 +62,51 @@ sb sb_from_cstr(const char *str){
     return (sb){.str = temp, .len = len, .cap = cap};
 }
 
-sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *s, size_t size){
+sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size){
     size_t cap = size * 4;
     char *temp = arenaList_Alloc(arenaList, cap);
     if(temp == NULL){
         fprintf(stderr, "Error, Allocation Failed");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
-    memcpy(temp, s, size);
+    memcpy(temp, str, size);
     return (sb){.str = temp, .len = size, .cap = cap};
 }
 
+int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, size_t size){
+    if(sb == NULL || str == NULL){
+        fprintf(stderr, "Erorr, NULL Pointer\n");
+        return str_err;
+    }
+
+    if(sb->str == NULL || sb->cap == 0){
+        fprintf(stderr, "Erorr, Invalid String Buffer\n");
+        return str_err;
+    }
+
+    if(sb->cap > sb->len + size){
+        memcpy(sb->str+sb->len, str, size);
+        sb->len += size;
+    }else{
+        size_t temp_cap = sb->cap * 2;
+        char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, sb->cap * 2);
+        if(temp == NULL){
+            fprintf(stderr, "Erorr, Realocation Failed\n");
+            return str_fail;
+        }
+        sb->cap = temp_cap;
+        sb->str = temp;
+        memcpy(sb->str+sb->len, str, size);
+        sb->len += size;
+    }
+
+    return str_succ;
+}
+
 sb *sb_cat(sb *dest, sb  *src){
-    if(dest->len == 0 
-    || src->str == NULL 
-    || dest->str == NULL 
-    || src->len == 0
-    ) return NULL;
+
+    assert(dest->len > 0 && src->str != NULL && dest->str != NULL && src->len != 0);
+
     if(dest->cap - 1 <  dest->len + src->len){
         size_t temp_len = (dest->len + src->len);
         size_t temp_cap = temp_len * 2;
@@ -217,6 +246,12 @@ int sb_push_char(sb *sb, char ch){
         sb->cap = temp_cap;
     }
     return str_succ;
+}
+
+char * cstr_from_sb(const sb *sb){
+    assert(sb != NULL && sb->len > 0);
+    sb->str[sb->len] = 0;
+    return sb->str;
 }
 
 void sb_println(const sb *sb){

@@ -121,7 +121,9 @@ void sv_print(const sv *sv); // prints sdtring-view  without new line
 // string_buffer functions ###############################################
 sb sb_from_cstr(const char *str);// creating a string-buffer from char *
 
-sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *s, size_t size); // creating a string-buffer from char * with it's size inside an areanaList
+sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size); // creating a string-buffer from char * with it's size inside an areanaList
+
+int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, size_t size);
 
 sb *sb_cat(sb *dest, sb *src); // concatanate two string-buffers in the heap
 
@@ -134,6 +136,8 @@ int sb_push_cstr(sb *sb, const char *str);// append (push) a char * inside a str
 int sb_push_cstr_sz(sb *sb, const char *str, size_t size);// append (push) a char * (with its size) inside a string-buffer
 
 int sb_push_char(sb *sb, char ch);// append (push) a charachter inside a string-buffer
+
+char * cstr_from_sb(const sb *sb);// char * with /0 at the end from string_buffer
 
 void sb_println(const sb *sb); // prints a string-buffer (current used bytes (chars)) with new line(\n)
 

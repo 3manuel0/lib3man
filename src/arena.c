@@ -17,10 +17,10 @@ Arena create_Arena(size_t arena_size){
 
 void * arena_Alloc(Arena * arena, size_t size){
     assert(arena != NULL && size > 0);
-
+    assert(arena->capacity >= size && "The Size Cannot Be Bigger Than The Capacity");
     void * ptr = NULL;
     if(arena->memory == NULL) return NULL;
-    if(arena->cur_size + size < arena->capacity){
+    if(arena->cur_size + size <= arena->capacity){
         ptr = arena->address;
         arena->address =  (char *)arena->address + size;
         arena->cur_size += size;
@@ -49,7 +49,6 @@ void arena_free(Arena * arena){
     arena->cur_size = 0;
 }
 
-
 ArenaList *create_ArenaList(size_t size){
     ArenaList * arenaList = malloc(sizeof(ArenaList));
     if(arenaList == NULL){
@@ -62,14 +61,19 @@ ArenaList *create_ArenaList(size_t size){
     return arenaList;
 }
 
-
 // linked list of arenas in case the first arena got full
 //  so we can deallocat everything in the end
 void *arenaList_Alloc(ArenaList *arenalist, size_t size){
-    if(arenalist->arena.capacity > arenalist->arena.cur_size + size){
+    if(arenalist->arena.capacity >= arenalist->arena.cur_size + size){
         return arena_Alloc(&arenalist->arena, size);
     }else{
         arenalist->next = malloc(sizeof(ArenaList));
+
+        if(arenalist->next == NULL){
+            fprintf(stderr, "Error, ArenaList Allocation Failed\n");
+            exit(-1);
+        }
+        
         size_t capacity = arenalist->arena.capacity;
         arenalist = arenalist->next;
         arenalist->arena = create_Arena(capacity);
