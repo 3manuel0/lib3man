@@ -39,6 +39,7 @@ void arena_free(Arena * arena){
     if(arena->memory == NULL) return;
     // free the arena before closing the programme
     free(arena->memory);
+    arena->memory = NULL;
     arena->address = NULL;
     arena->capacity = 0;
     arena->cur_size = 0;
