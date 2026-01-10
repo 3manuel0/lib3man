@@ -1,11 +1,13 @@
 #include "../includes/lib3man.h"
+#include <assert.h>
+#include <stdio.h>
 
 Arena create_Arena(size_t arena_size){
     Arena arena = {0};
     arena.capacity = arena_size;
     arena.memory = malloc(arena.capacity);
     if(arena.memory == NULL){
-        perror("Error allocating memory\n");
+        fprintf(stderr, "Error, Arena Allocation Failed\n");
         exit(-1);
     }
     arena.address = arena.memory;
@@ -14,6 +16,8 @@ Arena create_Arena(size_t arena_size){
 }
 
 void * arena_Alloc(Arena * arena, size_t size){
+    assert(arena != NULL && size > 0);
+
     void * ptr = NULL;
     if(arena->memory == NULL) return NULL;
     if(arena->cur_size + size < arena->capacity){
@@ -21,7 +25,7 @@ void * arena_Alloc(Arena * arena, size_t size){
         arena->address =  (char *)arena->address + size;
         arena->cur_size += size;
     }else{
-        perror("arena is full\n");
+        fprintf(stderr, "Error, Arena is Full\n");
         // I will add more options later
     }
     return ptr;
@@ -36,7 +40,7 @@ void arena_reset(Arena * arena){
 
 
 void arena_free(Arena * arena){
-    if(arena->memory == NULL) return;
+    assert(arena->memory != NULL);
     // free the arena before closing the programme
     free(arena->memory);
     arena->memory = NULL;
@@ -48,6 +52,10 @@ void arena_free(Arena * arena){
 
 ArenaList *create_ArenaList(size_t size){
     ArenaList * arenaList = malloc(sizeof(ArenaList));
+    if(arenaList == NULL){
+        fprintf(stderr, "Error, ArenaList Allocation Failed\n");
+        return NULL;
+    }
     arenaList->next = NULL;
     if(arenaList == NULL) return NULL;
     *arenaList = (ArenaList){.arena = create_Arena(size), .next = NULL};
