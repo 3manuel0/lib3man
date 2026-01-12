@@ -125,6 +125,8 @@ sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size)
 
 int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, size_t size);
 
+int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv);
+
 sb *sb_cat(sb *dest, sb *src); // concatanate two string-buffers in the heap
 
 sb sb_from_sv(const sv *sv); // creates a string-buffer from a string view in the heap

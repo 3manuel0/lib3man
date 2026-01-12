@@ -74,10 +74,7 @@ sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size)
 }
 
 int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, size_t size){
-    if(sb == NULL || str == NULL){
-        fprintf(stderr, "Erorr, NULL Pointer\n");
-        return str_err;
-    }
+    assert(sb != NULL || str != NULL);
 
     if(sb->str == NULL || sb->cap == 0){
         fprintf(stderr, "Erorr, Invalid String Buffer\n");
@@ -98,6 +95,33 @@ int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, siz
         sb->str = temp;
         memcpy(sb->str+sb->len, str, size);
         sb->len += size;
+    }
+
+    return str_succ;
+}
+
+int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv){
+    assert(sb != NULL || sv.str != NULL);
+
+    if(sb->str == NULL || sb->cap == 0){
+        fprintf(stderr, "Erorr, Invalid String Buffer\n");
+        return str_err;
+    }
+
+    if(sb->cap > sb->len + sv.len){
+        memcpy(sb->str+sb->len, sv.str, sv.len);
+        sb->len += sv.len;
+    }else{
+        size_t temp_cap = sb->cap * 2;
+        char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, sb->cap * 2);
+        if(temp == NULL){
+            fprintf(stderr, "Erorr, Realocation Failed\n");
+            return str_fail;
+        }
+        sb->cap = temp_cap;
+        sb->str = temp;
+        memcpy(sb->str+sb->len, sv.str, sv.len);
+        sb->len += sv.len;
     }
 
     return str_succ;
