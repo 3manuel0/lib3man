@@ -62,6 +62,16 @@ sb sb_from_cstr(const char *str){
     return (sb){.str = temp, .len = len, .cap = cap};
 }
 
+sb create_sb_inside_arenaList(ArenaList *arenaList, size_t cap){
+    assert(arenaList != NULL && cap > 0);
+    char *temp = arenaList_Alloc(arenaList, cap);
+    if(temp == NULL){
+        fprintf(stderr, "Error, Allocation Failed");
+        return (sb){.str = NULL, .len = 0, .cap = 0};
+    }
+    return (sb){.str = temp, .len = 0, .cap = cap};
+}
+
 sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size){
     size_t cap = size * 4;
     char *temp = arenaList_Alloc(arenaList, cap);

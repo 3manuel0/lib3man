@@ -1,5 +1,6 @@
 #ifndef LIB_3MAN
 #define LIB_3MAN
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -120,6 +121,8 @@ void sv_print(const sv *sv); // prints sdtring-view  without new line
 
 // string_buffer functions ###############################################
 sb sb_from_cstr(const char *str);// creating a string-buffer from char *
+
+sb create_sb_inside_arenaList(ArenaList *arenaList, size_t cap);
 
 sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size); // creating a string-buffer from char * with it's size inside an areanaList
 

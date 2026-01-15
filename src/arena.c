@@ -15,7 +15,7 @@ Arena create_Arena(size_t arena_size){
     return arena;
 }
 
-void * arena_Alloc(Arena * arena, size_t size){
+void *arena_Alloc(Arena * arena, size_t size){
     assert(arena != NULL && size > 0);
     assert(arena->capacity >= size && "The Size Cannot Be Bigger Than The Capacity");
     void * ptr = NULL;
