@@ -1,6 +1,4 @@
 #include "../includes/lib3man.h"
-#include <assert.h>
-#include <string.h>
 
 // Importent replaced wirte with fwrite :
 // 1- for buffering meaning printing is faster
@@ -12,6 +10,18 @@
 sv sv_from_cstr_sz(const char *str, size_t size){
     if(str == NULL) return (sv){.str = NULL, .len = 0};
     return (sv){.str = (char*) str, .len = size};
+}
+
+sv sv_from_cstr(const char *str){
+    assert(str != NULL);
+    size_t size = strlen(str);
+    return (sv){.str = (char*) str, .len = size};
+}
+
+sv sv_from_sb(const sb *sb){
+    assert(sb != NULL);
+    assert(sb->str != NULL && sb->len > 0);
+    return (sv){.str = sb->str, .len = sb->len};
 }
 
 int sv_cmp(const sv *sv1, const sv *sv2){
@@ -45,7 +55,7 @@ void sv_print(const sv *sv){
 
 // string buffer functions ##################################################################
 
-// TODO: sb inside areana and arenaList
+// TODO: sb inside areana and arenaList ## Almost done
 
 // creating a sb from char *
 sb sb_from_cstr(const char *str){
@@ -153,10 +163,12 @@ sb *sb_cat(sb *dest, sb  *src){
         memcpy(&dest->str[dest->len],src->str , src->len);
         dest->len = temp_len;
         dest->cap = temp_cap;
+        sb_free(src);
         return dest;
     }
     memcpy(&dest->str[dest->len],src->str , src->len);
     dest->len += src->len;
+    sb_free(src);
     return dest;
 }
 

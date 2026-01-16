@@ -1,6 +1,5 @@
 #ifndef LIB_3MAN
 #define LIB_3MAN
-#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -111,7 +110,11 @@ enum { str_fail = -1, str_succ, str_err };
 #define sv_from_lit(str) (sv){str, sizeof(str) - 1}
 
 // string-view functions ###############################################
-sv sv_from_cstr_sz(const char *str, size_t size);// creating a string view from char *
+sv sv_from_cstr_sz(const char *str, size_t size);// creating a string view from char * + size
+
+sv sv_from_cstr(const char *str);// creating a string view from char *
+
+sv sv_from_sb(const sb *sb);// string view from string buffer (a view to that string buffer)
 
 int sv_cmp(const sv *sv1, const sv *sv2); // compare 2 string-views
 
@@ -119,7 +122,7 @@ void sv_println(const sv *sv); // prints sdtring-view with new line(\n)
 
 void sv_print(const sv *sv); // prints sdtring-view  without new line
 
-// string_buffer functions ###############################################
+// string_buffer functions ###########################################################
 sb sb_from_cstr(const char *str);// creating a string-buffer from char *
 
 sb create_sb_inside_arenaList(ArenaList *arenaList, size_t cap);
@@ -149,6 +152,6 @@ void sb_println(const sb *sb); // prints a string-buffer (current used bytes (ch
 void sb_print(const sb *sb); // prints a string-buffer without new line
 
 void sb_free(sb *sb); // frees string-buffer in the heap
-// ##############################################################################
+// ###########################################################################################
 
 #endif

@@ -1,6 +1,4 @@
 #include "../includes/lib3man.h"
-#include <assert.h>
-#include <stdio.h>
 
 Arena create_Arena(size_t arena_size){
     Arena arena = {0};
