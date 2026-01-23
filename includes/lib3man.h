@@ -116,6 +116,8 @@ sv sv_from_cstr(const char *str);// creating a string view from char *
 
 sv sv_from_sb(const sb *sb);// string view from string buffer (a view to that string buffer)
 
+size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NULL*/, size_t sv_arr_len /* can be 0*/);// splits sb into sv_arr (use own array), returns the number of sub string (svs) in that sb
+
 int sv_cmp(const sv *sv1, const sv *sv2); // compare 2 string-views
 
 void sv_println(const sv *sv); // prints sdtring-view with new line(\n)

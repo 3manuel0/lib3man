@@ -1,5 +1,4 @@
 #include "includes/lib3man.h"
-#include <stdio.h>
 
 int main(){
     // TODO : test string sb_push_str and sstr

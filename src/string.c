@@ -24,6 +24,39 @@ sv sv_from_sb(const sb *sb){
     return (sv){.str = sb->str, .len = sb->len};
 }
 
+// returns the number of sub strings (svs)
+size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NULL*/, size_t sv_arr_len /* can be 0*/){
+    size_t count = 0;
+    if(sv_arr == NULL || sv_arr_len == 0){
+        for(size_t i = 0; i < sb->cap; i++){
+            if(sb->str[i] == delimiter) count++;
+        }
+        count++;
+    }else{
+        size_t len = 0;
+        char * tmp = sb->str;
+        size_t total = 0;
+        for(size_t i = 0; i < sv_arr_len; i++){
+            while(tmp[len] != delimiter || total < sb->len){
+                len++;
+                total++;
+            }
+            sv_arr[i].str = tmp;
+            sv_arr[i].len = len;
+            tmp += len;
+            len = 0;
+        }
+        if(total < sb->len){
+            for(size_t i = 0; i < sb->cap; i++){
+                if(sb->str[i] == delimiter) count++;
+            }
+            count++;
+        }
+    }
+
+    return count;
+}
+
 int sv_cmp(const sv *sv1, const sv *sv2){
     if(sv1->len != sv2->len) return false;
     for(size_t i = 0; i < sv1->len; i++){
