@@ -1,4 +1,6 @@
 #include "includes/lib3man.h"
+#include <string.h>
+#include <sys/types.h>
 
 int main(){
     // TODO : test string sb_push_str and sstr
@@ -19,24 +21,8 @@ int main(){
     printf("%p\n", test.str);
     sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
     printf("%p\n", test.str);
-    Arena * a1 = &a->arena;
-    // TESTS;
-    printf("arenasize:%zu arena_cap:%zu str:%p\n", a->arena.cur_size, a->arena.capacity, test.str);
-    int * myint = arenaList_Alloc(a, sizeof(int));
-    *myint = -789;
-    arenaList_Alloc(a, MiB(250));
-    sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
-    sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
-    sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
-    sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
-    sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
-    sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
-    sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
-    printf("cap:%zu len:%zu str:%p\n", test.cap, test.len,test.str);
-    arenaList_Alloc(a, MiB(20));
-    printf("arenasize:%zu arena_cap:%zu MiB str:%p\n", a->arena.cur_size , a->arena.capacity , test.str);
-    printf("a1size:%zu a1cap:%zu int:%d\n", a1->cur_size , a1->capacity , *myint);
-    sb_print(&test);
-    arenaList_free(a);
+    // TESTS
+    printf("%zu\n", sb_split_svs_char(&s, ' ', NULL, 0));
+    sb_println(&s);
     return 0;
 }

@@ -27,6 +27,7 @@ sv sv_from_sb(const sb *sb){
 // returns the number of sub strings (svs)
 size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NULL*/, size_t sv_arr_len /* can be 0*/){
     size_t count = 0;
+    if(delimiter == 0) return 0;
     if(sv_arr == NULL || sv_arr_len == 0){
         for(size_t i = 0; i < sb->cap; i++){
             if(sb->str[i] == delimiter) count++;
