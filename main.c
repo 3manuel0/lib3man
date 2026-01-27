@@ -2,8 +2,23 @@
 #include <string.h>
 #include <sys/types.h>
 
+
+void old_test(void);
+
+
+
 int main(){
-    // TODO : test string sb_push_str and sstr
+    sv strv = sv_from_lit("9223372036854775808");
+    i64 n = 0;
+    int s = sv_to_int64(&strv, &n);
+    printf("successful:%s number:%ld\n", s ? "true" : "false", n);
+    return 0;
+}
+
+
+
+void old_test(){
+        // TODO : test string sb_push_str and sstr
     sb s = sb_from_sv(&sv_from_lit("anger builds"));
     sb_push_sv(&s, &sv_from_lit(" anger builds"));
     sb_push_sv(&s, &sv_from_lit(" anger builds"));
@@ -24,5 +39,4 @@ int main(){
     // TESTS
     printf("%zu\n", sb_split_svs_char(&s, ' ', NULL, 0));
     sb_println(&s);
-    return 0;
 }

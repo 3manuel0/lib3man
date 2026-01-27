@@ -1,4 +1,7 @@
 #include "../includes/lib3man.h"
+#include <assert.h>
+#include <stddef.h>
+#include <stdint.h>
 
 // Importent replaced wirte with fwrite :
 // 1- for buffering meaning printing is faster
@@ -66,9 +69,41 @@ int sv_cmp(const sv *sv1, const sv *sv2){
     return true;
 }
 
+int sv_to_int64(const sv *sv, i64 *out){
+    assert(sv != NULL && out != NULL);
+
+    if(sv->len > 20) return false;
+    if(sv->len == 20 && sv->str[0] != '-') return false;
+    i64 temp = 0;
+    size_t i = 0;
+    u8 is_negative = 0;
+
+    if(sv->str[0] == '-'){
+        is_negative = 1;
+        i++;
+    }else if(sv->str[0] < '0' || sv->str[0] > '9') return false;
+
+    for( ; i < sv->len; i++){
+        if(sv->str[i] < '0' || sv->str[i] > '9') return false;
+        temp *=  10;
+        temp += sv->str[i] - '0';
+    }
+    
+    if(!is_negative && temp < 0) return false;
+
+    if(is_negative) temp = -temp;
+    *out = temp;
+
+    return true;
+}
+
 void sv_println(const sv *sv){
-    if(sv->str == NULL){
-        fwrite("empty\n", 1, 6, stdout);
+    if(sv == NULL){
+        fwrite("NULL\n", 1, 5, stdout);
+        return;
+    }
+    if(sv->str == NULL || sv->len == 0){
+        fwrite("EMPTY_STR\n", 1, 10, stdout);
         return;
     }
     fwrite(sv->str, 1, sv->len,stdout);
@@ -78,8 +113,12 @@ void sv_println(const sv *sv){
 }
 
 void sv_print(const sv *sv){
-    if(sv->str == NULL){
-        fwrite("empty", 1, 5, stdout);
+    if(sv == NULL){
+        fwrite("NULL", 1, 4, stdout);
+        return;
+    }
+    if(sv->str == NULL || sv->len == 0){
+        fwrite("EMPTY_STR", 1, 9, stdout);
         return;
     }
     fwrite(sv->str, 1, sv->len,stdout);

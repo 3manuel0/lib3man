@@ -12,6 +12,7 @@ typedef uint32_t u32;
 typedef int8_t i8;
 typedef int16_t i16;
 typedef int32_t i32;
+typedef int64_t i64;
 typedef float f32;
 typedef double f64;
 
@@ -119,6 +120,8 @@ sv sv_from_sb(const sb *sb);// string view from string buffer (a view to that st
 size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NULL*/, size_t sv_arr_len /* can be 0*/);// splits sb into sv_arr (use own array), returns the number of sub string (svs) in that sb
 
 int sv_cmp(const sv *sv1, const sv *sv2); // compare 2 string-views
+
+int sv_to_int64(const sv *sv, i64 *out);// return true if succesful, out is the pointer to which it writes the number
 
 void sv_println(const sv *sv); // prints sdtring-view with new line(\n)
 
