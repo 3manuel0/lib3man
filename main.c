@@ -1,9 +1,6 @@
 #include "includes/lib3man.h"
 
-
 void old_test(void);
-
-
 
 int main(){
     string_view strv = sv_from_lit("2147483647");
@@ -13,6 +10,10 @@ int main(){
     i64 n = 0;
     s = sv_to_int64(&strv, &n);
     printf("successful:%s number64:%ld\n", s ? "true" : "false", n);
+    // double experiment = 1.7976931348623157891575E+308;
+    double experiment = 645644564.5555654464456456664;
+    long e = 0x7FF0000000000000;
+    printf("%ld %.19lf %lb\n", *(long*)&experiment, *(double*)&e, e);
     return 0;
 }
 
