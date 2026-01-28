@@ -1,7 +1,4 @@
 #include "../includes/lib3man.h"
-#include <assert.h>
-#include <stddef.h>
-#include <stdint.h>
 
 // Importent replaced wirte with fwrite :
 // 1- for buffering meaning printing is faster
@@ -75,7 +72,7 @@ int sv_to_int64(const sv *sv, i64 *out){
     if(sv->len > 20) return false;
     if(sv->len == 20 && sv->str[0] != '-') return false;
     i64 temp = 0;
-    size_t i = 0;
+    u32 i = 0;
     u8 is_negative = 0;
 
     if(sv->str[0] == '-'){
@@ -90,8 +87,36 @@ int sv_to_int64(const sv *sv, i64 *out){
     }
     
     if(!is_negative && temp < 0) return false;
-
     if(is_negative) temp = -temp;
+    if(is_negative && temp > 0) return false;
+    *out = temp;
+
+    return true;
+}
+
+int sv_to_int32(const sv *sv, i32 *out){
+    assert(sv != NULL && out != NULL);
+
+    if(sv->len > 11) return false;
+    if(sv->len == 11 && sv->str[0] != '-') return false;
+    i32 temp = 0;
+    u32 i = 0;
+    u8 is_negative = 0;
+
+    if(sv->str[0] == '-'){
+        is_negative = 1;
+        i++;
+    }else if(sv->str[0] < '0' || sv->str[0] > '9') return false;
+
+    for( ; i < sv->len; i++){
+        if(sv->str[i] < '0' || sv->str[i] > '9') return false;
+        temp *=  10;
+        temp += sv->str[i] - '0';
+    }
+    
+    if(!is_negative && temp < 0) return false;
+    if(is_negative) temp = -temp;
+    if(is_negative && temp > 0) return false;
     *out = temp;
 
     return true;

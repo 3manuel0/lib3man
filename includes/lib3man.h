@@ -123,6 +123,8 @@ int sv_cmp(const sv *sv1, const sv *sv2); // compare 2 string-views
 
 int sv_to_int64(const sv *sv, i64 *out);// return true if succesful, out is the pointer to which it writes the number
 
+int sv_to_int32(const sv *sv, i32 *out);// return true if succesful, out is the pointer to which it writes the number
+
 void sv_println(const sv *sv); // prints sdtring-view with new line(\n)
 
 void sv_print(const sv *sv); // prints sdtring-view  without new line

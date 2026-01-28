@@ -1,6 +1,4 @@
 #include "includes/lib3man.h"
-#include <string.h>
-#include <sys/types.h>
 
 
 void old_test(void);
@@ -8,10 +6,13 @@ void old_test(void);
 
 
 int main(){
-    sv strv = sv_from_lit("9223372036854775808");
+    string_view strv = sv_from_lit("2147483647");
+    i32 n_ = 0;
+    int s = sv_to_int32(&strv, &n_);
+    printf("successful:%s number32:%d\n", s ? "true" : "false", n_);
     i64 n = 0;
-    int s = sv_to_int64(&strv, &n);
-    printf("successful:%s number:%ld\n", s ? "true" : "false", n);
+    s = sv_to_int64(&strv, &n);
+    printf("successful:%s number64:%ld\n", s ? "true" : "false", n);
     return 0;
 }
 
