@@ -1,8 +1,26 @@
 #include "includes/lib3man.h"
 
-void old_test(void);
 
 int main(){
+    sv tests[] = {
+        sv_from_lit("123.456"),
+        sv_from_lit("-987"),
+        sv_from_lit("000.000100"),
+        sv_from_lit(".505"),
+        sv_from_lit("1.23e-4"),
+        sv_from_lit("5.5E+2"),
+        sv_from_lit("0.12345678901234567"),
+        sv_from_lit("3.14159junk"),
+        sv_from_lit("12.34.56"),
+        sv_from_lit("4.9e-324")
+    };
+    f64 t = 0.0;
+    for(int i = 0; i < 10; i++){
+        sv_to_float64(&tests[i], &t);
+    }
+}
+
+void last_test(){
     string_view strv = sv_from_lit("2147483647");
     i32 n_ = 0;
     int s = sv_to_int32(&strv, &n_);
@@ -14,10 +32,7 @@ int main(){
     double experiment = 645644564.5555654464456456664;
     long e = 0x7FF0000000000000;
     printf("%ld %.19lf %lb\n", *(long*)&experiment, *(double*)&e, e);
-    return 0;
 }
-
-
 
 void old_test(){
         // TODO : test string sb_push_str and sstr

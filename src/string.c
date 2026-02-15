@@ -1,4 +1,6 @@
 #include "../includes/lib3man.h"
+#include <ctype.h>
+#include <stddef.h>
 
 // Importent replaced wirte with fwrite :
 // 1- for buffering meaning printing is faster
@@ -130,7 +132,35 @@ int sv_to_int32(const sv *sv, i32 *out){
 }
 
 int sv_to_float64(const sv *sv, f64 *out){
-    // TODO: WRITE THIS FUNCTION
+    assert(sv != NULL && out != NULL);
+    if(sv->len > 11) return false;
+    u32 i = 0;
+    u8 is_negative = 0;
+    f64 temp = 0.0;
+    f64 exponent = 0.0;
+
+    if(sv->str[0] == '-' || sv->str[0] == '+'){
+        is_negative = 1;
+        i++;
+    }
+    for(;i < sv->len; i++){
+        if(sv->str[i] < '0' || sv->str[i] > '9')
+            break;
+        temp *= 10;
+        temp += sv->str[i] - '0';
+    }
+    sv_println(sv);
+    printf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
+    if(sv->str[i] == '.') i++;
+    for(f64 t = 10.0;i < sv->len; i++){
+        if(sv->str[i] < '0' || sv->str[i] > '9')
+            break;
+        temp += (sv->str[i] - '0') / t;
+        printf("%lf, div: %lf\n", t, (sv->str[i] - '0') / t);
+        t*=10.0;
+    }
+    printf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
+    // TODO: FINISH THE FUNCTION
     return true;
 }
 
