@@ -16,7 +16,7 @@ src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 main: main.c $(LIB)
-	$(CC) $(CFLAGS) main.c -Llib -l3man -o main
+	$(CC) $(CFLAGS) main.c -Llib -lm -l3man -o main
 
 clean:
 	rm -f src/*.o $(LIB) main
