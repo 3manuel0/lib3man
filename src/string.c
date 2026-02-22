@@ -137,7 +137,7 @@ int sv_to_float64(const sv *sv, f64 *out){
     u32 i = 0;
     u8 is_negative = 0;
     f64 temp = 0.0;
-    f64 exponent = 0.0;
+    f64 exponent = 1.0;
     // printf("-------------------------------------------\n");
 
     if(sv->str[0] == '-' || sv->str[0] == '+'){
@@ -189,7 +189,17 @@ int sv_to_float64(const sv *sv, f64 *out){
             exp += sv->str[i] - '0';
         }
 
-        exponent = neg ? pow(10, -exp) : pow(10, exp);
+        // exponent = neg ? pow(10, -exp) : pow(10, exp);
+        // no need for pow also no need to link with math (-lm)
+        if(neg){
+            while (exp > 0) { exponent /= 10;
+                exp--;
+            }
+        }else{
+            while (exp > 0) { exponent *= 10;
+                exp--;
+            }
+        }
         // printf(" exp = %d exponent = %lf f64 = %lf\n", exp, exponent, temp * exponent);
     }
 
