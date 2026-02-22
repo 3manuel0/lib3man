@@ -17,12 +17,15 @@ int main(){
         sv_from_lit("1.7976931348623157891575E+308"),// max_float64
         sv_from_lit("1.8e+308") // too big for (inf/infinity)
     };
+
     f64 t = 0.0;
     for(int i = 0; i < 12; i++){
         int s = sv_to_float64(&tests[i], &t);
         if(s)
             printf("the output = %lf\n", t);
     }
+
+    return 0;
 }
 
 void last_test(){

@@ -104,6 +104,7 @@ int sv_to_int32(const sv *sv, i32 *out){
     if(sv->len > 11) return false;
     if(sv->len == 11 && (sv->str[0] != '-' || sv->str[0] != '+'))
         return false;
+    
     i32 temp = 0;
     u32 i = 0;
     u8 is_negative = 0;
@@ -132,16 +133,18 @@ int sv_to_int32(const sv *sv, i32 *out){
 
 int sv_to_float64(const sv *sv, f64 *out){
     assert(sv != NULL && out != NULL);
+
     u32 i = 0;
     u8 is_negative = 0;
     f64 temp = 0.0;
     f64 exponent = 0.0;
-    printf("-------------------------------------------\n");
+    // printf("-------------------------------------------\n");
 
     if(sv->str[0] == '-' || sv->str[0] == '+'){
         is_negative = 1;
         i++;
     }
+
     for(;i < sv->len; i++){
         if(sv->str[i] < '0' || sv->str[i] > '9')
             break;
@@ -149,8 +152,8 @@ int sv_to_float64(const sv *sv, f64 *out){
         temp += sv->str[i] - '0';
     }
 
-    sv_println(sv);
-    printf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
+    // sv_println(sv);
+    // printf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
     
     if(sv->str[i] == '.') i++;
     else return false;
@@ -161,15 +164,17 @@ int sv_to_float64(const sv *sv, f64 *out){
         temp += (sv->str[i] - '0') / t;
         t*=10.0;
     }
-    printf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
+    // printf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
+    
     // TODO: DO MORE TESTS AND FIXES
     if(i < sv->len){
+
         if(sv->str[i] != 'e' && sv->str[i] != 'E') return false;
         i++;
         char neg = 0;
         int exp = 0;
 
-        printf("sign = %c\n", sv->str[i]);
+        // printf("sign = %c\n", sv->str[i]);
 
         if(sv->str[i] == '+'){
             neg = 0;
@@ -177,19 +182,22 @@ int sv_to_float64(const sv *sv, f64 *out){
             neg = 1;
         }else return false;
         i++;
+
         for( ; i < sv->len; i++){
             if(sv->str[i] < '0' || sv->str[i] > '9') return false;
             exp *=  10;
             exp += sv->str[i] - '0';
         }
+
         exponent = neg ? pow(10, -exp) : pow(10, exp);
-        printf(" exp = %d exponent = %lf f64 = %lf\n", exp, exponent, temp * exponent);
+        // printf(" exp = %d exponent = %lf f64 = %lf\n", exp, exponent, temp * exponent);
     }
 
     if(exponent != 0.0)
         *out = temp * exponent;
     else
         *out = temp;
+
     if(is_negative) *out = -*out;
 
     return true;
