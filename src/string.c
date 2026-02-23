@@ -68,7 +68,8 @@ int sv_cmp(const sv *sv1, const sv *sv2){
 }
 
 int sv_to_int64(const sv *sv, i64 *out){
-    assert(sv != NULL && out != NULL);
+    assert(sv != NULL);
+    assert(sv->str != NULL && sv->len > 0);
 
     if(sv->len > 20) return false;
     if(sv->len == 20 && (sv->str[0] != '-' || sv->str[0] != '+'))
@@ -93,13 +94,16 @@ int sv_to_int64(const sv *sv, i64 *out){
     if(!is_negative && temp < 0) return false;
     if(is_negative) temp = -temp;
     if(is_negative && temp > 0) return false;
-    *out = temp;
+
+    if(out != NULL)
+        *out = temp;
 
     return true;
 }
 
 int sv_to_int32(const sv *sv, i32 *out){
-    assert(sv != NULL && out != NULL);
+    assert(sv != NULL);
+    assert(sv->str != NULL && sv->len > 0);
 
     if(sv->len > 11) return false;
     if(sv->len == 11 && (sv->str[0] != '-' || sv->str[0] != '+'))
@@ -126,13 +130,16 @@ int sv_to_int32(const sv *sv, i32 *out){
     if(!is_negative && temp < 0) return false;
     if(is_negative) temp = -temp;
     if(is_negative && temp > 0) return false;
-    *out = temp;
+
+    if(out != NULL)
+        *out = temp;
 
     return true;
 }
 
 int sv_to_float64(const sv *sv, f64 *out){
-    assert(sv != NULL && out != NULL);
+    assert(sv != NULL);
+    assert(sv->str != NULL && sv->len > 0);
 
     u32 i = 0;
     u8 is_negative = 0;
@@ -203,13 +210,14 @@ int sv_to_float64(const sv *sv, f64 *out){
         // printf(" exp = %d exponent = %lf f64 = %lf\n", exp, exponent, temp * exponent);
     }
 
-    if(exponent != 0.0)
-        *out = temp * exponent;
-    else
-        *out = temp;
+    if( out != NULL){
+        if(exponent != 0.0)
+            *out = temp * exponent;
+        else
+            *out = temp;
 
-    if(is_negative) *out = -*out;
-
+        if(is_negative) *out = -*out;
+    }
     return true;
 }
 

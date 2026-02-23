@@ -1,5 +1,6 @@
 #include "includes/lib3man.h"
 #include <stdio.h>
+#include <string.h>
 
 
 int main(){
@@ -24,7 +25,7 @@ int main(){
         if(s)
             printf("the output = %lf\n", t);
     }
-
+    int s = sv_to_float64(&sv_from_lit("1.8e+308"), NULL);
     return 0;
 }
 
