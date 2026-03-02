@@ -25,7 +25,6 @@ int main(){
         if(s)
             printf("the output = %lf\n", t);
     }
-    int s = sv_to_float64(&sv_from_lit("1.8e+308"), NULL);
     return 0;
 }
 

@@ -147,7 +147,7 @@ int sv_to_float64(const sv *sv, f64 *out){
     f64 exponent = 1.0;
     // printf("-------------------------------------------\n");
 
-    if(sv->str[0] == '-' || sv->str[0] == '+'){
+    if(sv->str[0] == '-'){
         is_negative = 1;
         i++;
     }
@@ -161,7 +161,10 @@ int sv_to_float64(const sv *sv, f64 *out){
 
     // sv_println(sv);
     // printf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
-    
+    if(i >= sv->len){
+        *out = is_negative ? -temp : temp;
+        return true;
+    }
     if(sv->str[i] == '.') i++;
     else return false;
 
@@ -178,7 +181,7 @@ int sv_to_float64(const sv *sv, f64 *out){
 
         if(sv->str[i] != 'e' && sv->str[i] != 'E') return false;
         i++;
-        char neg = 0;
+        u8 neg = 0;
         int exp = 0;
 
         // printf("sign = %c\n", sv->str[i]);
