@@ -16,11 +16,12 @@ int main(){
         sv_from_lit("12.34.56"),
         sv_from_lit("4.9e-324"),// too small rounds to 0 
         sv_from_lit("1.7976931348623157891575E+308"),// max_float64
-        sv_from_lit("1.8e+308") // too big for (inf/infinity)
+        sv_from_lit("1.8e+308"), // too big for (inf/infinity)
+        sv_from_lit("80")
     };
 
     f64 t = 0.0;
-    for(int i = 0; i < 12; i++){
+    for(int i = 0; i < 13; i++){
         int s = sv_to_float64(&tests[i], &t);
         if(s)
             printf("the output = %lf\n", t);

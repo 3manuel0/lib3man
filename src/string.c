@@ -161,9 +161,11 @@ int sv_to_float64(const sv *sv, f64 *out){
     // sv_println(sv);
     // printf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
     if(i >= sv->len){
-        *out = is_negative ? -temp : temp;
+        if(out != NULL)
+            *out = is_negative ? -temp : temp;
         return true;
     }
+
     if(sv->str[i] == '.') i++;
     else return false;
 
