@@ -130,6 +130,8 @@ void sv_println(const sv *sv); // prints sdtring-view with new line(\n)
 
 void sv_print(const sv *sv); // prints sdtring-view  without new line
 
+void sv_writef(const sv *sv, FILE *file); // wirtes sv to a file or stdout/stderr
+
 // string_buffer functions ###########################################################
 sb sb_from_cstr(const char *str);// creating a string-buffer from char *
 
@@ -158,6 +160,8 @@ char * cstr_from_sb(const sb *sb);// char * with /0 at the end from string_buffe
 void sb_println(const sb *sb); // prints a string-buffer (current used bytes (chars)) with new line(\n)
 
 void sb_print(const sb *sb); // prints a string-buffer without new line
+
+void sb_writef(const sb *sb, FILE *file);// wirtes sb to a file or stdout/stderr
 
 void sb_free(sb *sb); // frees string-buffer in the heap
 // ###########################################################################################

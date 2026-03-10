@@ -253,7 +253,17 @@ void sv_print(const sv *sv){
     // write(1, (char *)s->str, s->len); // write is too slow no buffering
 }
 
-
+void sv_writef(const sv *sv, FILE *file){
+    if(sv == NULL){
+        fwrite("NULL", 1, 4, file);
+        return;
+    }
+    if(sv->str == NULL || sv->len == 0){
+        fwrite("EMPTY_STR", 1, 9, file);
+        return;
+    }
+    fwrite(sv->str, 1, sv->len,file);
+}
 // string buffer functions ##################################################################
 
 // TODO: sb inside areana and arenaList ## Almost done
@@ -519,6 +529,18 @@ void sb_print(const sb *sb){
     }
     // write(1, s->str, s->len);
     fwrite(sb->str, 1, sb->len,stdout);
+}
+
+void sb_writef(const sb *sb, FILE *file){
+    if(sb == NULL){
+        fwrite("NULL", 1, 4, file);
+        return;
+    }
+    if(sb->str == NULL || sb->len == 0){
+        fwrite("EMPTY_STR", 1, 9, file);
+        return;
+    }
+    fwrite(sb->str, 1, sb->len,file);
 }
 
 void sb_free(sb *sb){
