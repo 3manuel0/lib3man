@@ -1,68 +1,109 @@
-#include "includes/lib3man.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include "../includes/lib3man.h"
 
-
-int main(){
-    sv tests[] = {
-        sv_from_lit("123.456"),
-        sv_from_lit("-987"),
-        sv_from_lit("000.000100"),
-        sv_from_lit(".505"),
-        sv_from_lit("1.23e-4"),
-        sv_from_lit("5.5E+2"),
-        sv_from_lit("0.12345678901234567"),
-        sv_from_lit("3.14159junk"),
-        sv_from_lit("12.34.56"),
-        sv_from_lit("4.9e-324"),// too small rounds to 0 
-        sv_from_lit("1.7976931348623157891575E+308"),// max_float64
-        sv_from_lit("1.8e+308"), // too big for (inf/infinity)
-        sv_from_lit("80")
-    };
-
-    f64 t = 0.0;
-    for(int i = 0; i < 13; i++){
-        int s = sv_to_float64(&tests[i], &t);
-        if(s)
-            printf("the output = %lf\n", t);
-    }
-    return 0;
-}
-
-void last_test(){
-    string_view strv = sv_from_lit("2147483647");
-    i32 n_ = 0;
-    int s = sv_to_int32(&strv, &n_);
-    printf("successful:%s number32:%d\n", s ? "true" : "false", n_);
-    i64 n = 0;
-    s = sv_to_int64(&strv, &n);
-    printf("successful:%s number64:%ld\n", s ? "true" : "false", n);
-    // double experiment = 1.7976931348623157891575E+308;
-    double experiment = 645644564.5555654464456456664;
-    long e = 0x7FF0000000000000;
-    printf("%ld %.19lf %lb\n", *(long*)&experiment, *(double*)&e, e);
-}
-
-void old_test(){
-        // TODO : test string sb_push_str and sstr
-    sb s = sb_from_sv(&sv_from_lit("anger builds"));
-    sb_push_sv(&s, &sv_from_lit(" anger builds"));
-    sb_push_sv(&s, &sv_from_lit(" anger builds"));
-    printf("cap:%zu len:%zu p:%p\n", s.cap, s.len, s.str);
-    sb_push_sv(&s, &sv_from_lit(" anger builds"));
-    printf("cap:%zu len:%zu p:%p\n", s.cap, s.len, s.str);
-    // for(int i = 0; i < 100000; i++)
-    //     sb_println(&s);
-    // 310 <-> 298 write
-    // 182 <-> 160 fwrite fwrite is faster 
-    ArenaList *a = create_ArenaList(MiB(250));
-    sb test = sb_arenaList_from_cstr_sz(a, "anger builds\n", 13);
-    printf("%p\n", test.str);
-    sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
-    printf("%p\n", test.str);
-    sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
-    printf("%p\n", test.str);
-    // TESTS
-    printf("%zu\n", sb_split_svs_char(&s, ' ', NULL, 0));
+int main(void)
+{
+    /*
+    test 1: sb_from_cstr
+    this should print "hello", but it probably prints garbage
+    because the string is never copied into the buffer
+    */
+    sb s = sb_from_cstr("hello");
     sb_println(&s);
+    sb_free(&s);
+
+    /*
+    test 2: realloc issue
+    pushing a lot of data should trigger realloc
+    but since realloc uses the wrong size, this will crash
+    */
+    /*
+    sb s = sb_from_cstr("A");
+    memcpy(s.str, "A", 1);
+    for (int i = 0; i < 1000; i++) {
+        sb_push_cstr(&s, "B");
+    }
+    sb_println(&s);
+    sb_free(&s);
+    */
+
+    /*
+    test 3: null terminator overflow
+    here we force len == cap, then try to add '\0'
+    this should write out of bounds
+    */
+    /*
+    sb s = sb_from_cstr("hello");
+    memcpy(s.str, "hello", 5);
+    s.len = s.cap;
+    char *c = cstr_from_sb(&s);
+    printf("%s\n", c);
+    sb_free(&s);
+    */
+
+    /*
+    test 4: split function (currently active)
+    this one is very likely to crash because of the loop condition
+    */
+    
+    /*
+    sb s = sb_from_cstr("a,b,c,d");
+    memcpy(s.str, "a,b,c,d", 7);
+    s.len = 7;
+
+    sv arr[10];
+    size_t count = sb_split_svs_char(&s, ',', arr, 10);
+
+    printf("Count: %zu\n", count);
+    sb_free(&s);
+    */ 
+
+    /*
+    test 5: bad assert
+    this passes NULL and relies on a broken assert (|| instead of &&)
+    should crash immediately
+    */
+    /*
+    sb *s = NULL;
+    sb_arenaList_push_cstr_sz(NULL, s, "hello", 5);
+    */
+
+    /*
+    test 6: arena list behavior
+    tries to force allocation into a new arena
+    might cause weird memory issues
+    */
+    /*
+    ArenaList *arena = create_ArenaList(16);
+
+    char *a = arenaList_Alloc(arena, 8);
+    strcpy(a, "1234567");
+
+    char *b = arenaList_Alloc(arena, 2147483648);
+    strcpy(b, "OVERFLOW_TEST");
+
+    printf("a: %s | b: %s\n", a, b);
+
+    arenaList_free(arena);
+    */
+
+    /*
+    test 7: arena realloc
+    tries to grow memory to see if realloc logic breaks
+    */
+    /*
+    ArenaList *arena = create_ArenaList(16);
+
+    char *p = arenaList_Alloc(arena, 8);
+    strcpy(p, "test");
+
+    p = arenaList_Realloc(arena, p, 8, 1024);
+
+    printf("%s\n", p);
+
+    arenaList_free(arena);
+    */
+    return 0;
 }

@@ -24,38 +24,42 @@ sv sv_from_sb(const sb *sb){
     return (sv){.str = sb->str, .len = sb->len};
 }
 
-// returns the number of sub strings (svs)
-size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NULL*/, size_t sv_arr_len /* can be 0*/){
-    size_t count = 0;
-    if(delimiter == 0) return 0;
-    if(sv_arr == NULL || sv_arr_len == 0){
-        for(size_t i = 0; i < sb->cap; i++){
-            if(sb->str[i] == delimiter) count++;
-        }
-        count++;
-    }else{
-        size_t len = 0;
-        char * tmp = sb->str;
-        size_t total = 0;
-        for(size_t i = 0; i < sv_arr_len; i++){
-            while(tmp[len] != delimiter || total < sb->len){
-                len++;
-                total++;
-            }
-            sv_arr[i].str = tmp;
-            sv_arr[i].len = len;
-            tmp += len;
-            len = 0;
-        }
-        if(total < sb->len){
-            for(size_t i = 0; i < sb->cap; i++){
-                if(sb->str[i] == delimiter) count++;
-            }
-            count++;
-        }
+/*
+ * Split the used bytes in sb by delimiter.
+ *
+ * Returns the total number of segments, even when sv_arr is too small
+ * to hold all of them. Only sb->len bytes are scanned.
+ */
+size_t sb_split_svs_char(const sb *sb, char delimiter, sv *sv_arr /* can be NULL*/, size_t sv_arr_len /* can be 0*/)
+{
+    assert(sb != NULL);
+
+    // Invalid delimiter, NULL data, or empty input produces no segments.
+    if (delimiter == 0 || sb->str == NULL || sb->len == 0)
+        return 0;
+
+    size_t total_parts = 1;
+    for (size_t i = 0; i < sb->len; i++) {
+        if (sb->str[i] == delimiter)
+            total_parts++;
     }
 
-    return count;
+    if (sv_arr == NULL || sv_arr_len == 0)
+        return total_parts;
+
+    size_t out_count = 0;
+    size_t start = 0;
+    for (size_t i = 0; i < sb->len && out_count < sv_arr_len; i++) {
+        if (sb->str[i] == delimiter) {
+            sv_arr[out_count++] = (sv){.str = sb->str + start, .len = i - start};
+            start = i + 1;
+        }
+    }
+    if (out_count < sv_arr_len) {
+        sv_arr[out_count++] = (sv){.str = sb->str + start, .len = sb->len - start};
+    }
+
+    return total_parts;
 }
 
 int sv_cmp(const sv *sv1, const sv *sv2){
@@ -161,8 +165,10 @@ int sv_to_float64(const sv *sv, f64 *out){
     // sv_println(sv);
     // printf("break was in %c | f64 = %.8lf\n", sv->str[i], temp);
     if(i >= sv->len){
-        if(out != NULL)
-            *out = is_negative ? -temp : temp;
+        if(out != NULL){
+            if(is_negative) *out = -temp;
+            else *out = temp;
+        }
         return true;
     }
 
@@ -200,7 +206,7 @@ int sv_to_float64(const sv *sv, f64 *out){
             exp += sv->str[i] - '0';
         }
 
-        // exponent = neg ? pow(10, -exp) : pow(10, exp);
+        // old pow-based approach was removed to avoid -lm dependency.
         // no need for pow also no need to link with math (-lm)
         if(neg){
             while (exp > 0) { exponent /= 10;
@@ -268,17 +274,31 @@ void sv_writef(const sv *sv, FILE *file){
 
 // TODO: sb inside areana and arenaList ## Almost done
 
-// creating a sb from char *
-sb sb_from_cstr(const char *str){
+/*
+ * Create an owned string buffer from a c-string.
+ *
+ * The source bytes are copied immediately so the buffer does not depend
+ * on the lifetime of the input pointer.
+ */
+sb sb_from_cstr(const char *str)
+{
     assert(str != NULL);
+
     size_t len = strlen(str);
+    // Keep at least one allocated byte for empty input.
     size_t cap = len * 4;
+    if (cap == 0)
+        cap = 1;
+
     char *temp = malloc(cap);
 
-    if(temp == NULL){
+    if (temp == NULL) {
         fprintf(stderr, "Error, Allocation Failed");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
+
+    if (len > 0)
+        memcpy(temp, str, len);
 
     return (sb){.str = temp, .len = len, .cap = cap};
 }
@@ -304,54 +324,74 @@ sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size)
     return (sb){.str = temp, .len = size, .cap = cap};
 }
 
-int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, size_t size){
-    assert(sb != NULL || str != NULL);
+/*
+ * Append a sized c-string into an arena-backed string buffer.
+ */
+int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, size_t size)
+{
+    assert(arenaList != NULL && sb != NULL && str != NULL);
 
-    if(sb->str == NULL || sb->cap == 0){
+    if (sb->str == NULL || sb->cap == 0) {
         fprintf(stderr, "Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
-    if(sb->cap > sb->len + size){
-        memcpy(sb->str+sb->len, str, size);
+    if (sb->cap >= sb->len + size) {
+        memcpy(sb->str + sb->len, str, size);
         sb->len += size;
-    }else{
-        size_t temp_cap = sb->cap * 2;
-        char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, sb->cap * 2);
-        if(temp == NULL){
+    } else {
+        // Grow geometrically until the incoming payload fits, then reallocate once.
+        size_t temp_cap = sb->cap;
+        while (temp_cap < sb->len + size) {
+            temp_cap *= 2;
+        }
+
+        char *temp = arenaList_Realloc(arenaList, sb->str, sb->cap, temp_cap);
+        if (temp == NULL) {
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;
         }
+
         sb->cap = temp_cap;
         sb->str = temp;
-        memcpy(sb->str+sb->len, str, size);
+        memcpy(sb->str + sb->len, str, size);
         sb->len += size;
     }
 
     return str_succ;
 }
 
-int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv){
-    assert(sb != NULL || sv.str != NULL);
+/*
+ * Append a string view into an arena-backed string buffer.
+ */
+int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv)
+{
+    assert(arenaList != NULL && sb != NULL && sv.str != NULL);
 
-    if(sb->str == NULL || sb->cap == 0){
+    if (sb->str == NULL || sb->cap == 0) {
         fprintf(stderr, "Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
-    if(sb->cap > sb->len + sv.len){
-        memcpy(sb->str+sb->len, sv.str, sv.len);
+    if (sb->cap >= sb->len + sv.len) {
+        memcpy(sb->str + sb->len, sv.str, sv.len);
         sb->len += sv.len;
-    }else{
-        size_t temp_cap = sb->cap * 2;
-        char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, sb->cap * 2);
-        if(temp == NULL){
+    } else {
+        // Grow geometrically until the incoming payload fits, then reallocate once.
+        size_t temp_cap = sb->cap;
+        while (temp_cap < sb->len + sv.len) {
+            temp_cap *= 2;
+        }
+
+        char *temp = arenaList_Realloc(arenaList, sb->str, sb->cap, temp_cap);
+        if (temp == NULL) {
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;
         }
+
         sb->cap = temp_cap;
         sb->str = temp;
-        memcpy(sb->str+sb->len, sv.str, sv.len);
+        memcpy(sb->str + sb->len, sv.str, sv.len);
         sb->len += sv.len;
     }
 
@@ -398,105 +438,145 @@ sb sb_from_sv(const sv *sv){
     return (sb){.str = temp, .len = sv->len, .cap = sv->len*4};
 }
 
-int sb_push_sv(sb *sb, const sv *sv){
+/*
+ * Append a string view into a heap-backed string buffer.
+ */
+int sb_push_sv(sb *sb, const sv *sv)
+{
     assert(sb != NULL && sv != NULL);
 
-    if(sb->str == NULL || sv->str == NULL || sb->cap == 0){
+    if (sb->str == NULL || sv->str == NULL || sb->cap == 0) {
         fprintf(stderr, "Erorr, Invalid strings\n");
         return str_err;
     }
 
-    if(sb->cap > sb->len + sv->len){
-        memcpy(sb->str+sb->len, sv->str, sv->len);
+    if (sb->cap >= sb->len + sv->len) {
+        memcpy(sb->str + sb->len, sv->str, sv->len);
         sb->len += sv->len;
-    }else{
-        size_t temp_cap = sb->cap * 2;
-        char * s  = realloc(sb->str, sb->cap);
-        if(s == NULL){
+    } else {
+        // Realloc must use the computed target capacity, not the previous capacity.
+        size_t temp_cap = sb->cap;
+        while (temp_cap < sb->len + sv->len) {
+            temp_cap *= 2;
+        }
+
+        char *s = realloc(sb->str, temp_cap);
+        if (s == NULL) {
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;
         }
+
         sb->cap = temp_cap;
         sb->str = s;
-        memcpy(sb->str+sb->len, sv->str, sv->len);
+        memcpy(sb->str + sb->len, sv->str, sv->len);
         sb->len += sv->len;
     }
 
     return str_succ;
 }
 
-int sb_push_cstr(sb *sb, const char *str){
-    if(sb == NULL || str == NULL){
+/*
+ * Append a null-terminated c-string into a heap-backed string buffer.
+ */
+int sb_push_cstr(sb *sb, const char *str)
+{
+    if (sb == NULL || str == NULL) {
         fprintf(stderr, "Erorr, NULL Pointer\n");
         return str_err;
     }
 
-    if(sb->str == NULL || sb->cap == 0){
+    if (sb->str == NULL || sb->cap == 0) {
         fprintf(stderr, "Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
     size_t str_len = strlen(str);
-    if(sb->cap > sb->len + str_len){
-        memcpy(sb->str+sb->len, str, str_len);
+    if (sb->cap >= sb->len + str_len) {
+        memcpy(sb->str + sb->len, str, str_len);
         sb->len += str_len;
-    }else{
-        size_t temp_cap = sb->cap * 2;
-        char * s  = realloc(sb->str, sb->cap);
-        if(s == NULL){
+    } else {
+        // Realloc must use the computed target capacity, not the previous capacity.
+        size_t temp_cap = sb->cap;
+        while (temp_cap < sb->len + str_len) {
+            temp_cap *= 2;
+        }
+
+        char *s = realloc(sb->str, temp_cap);
+        if (s == NULL) {
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;
         }
+
         sb->cap = temp_cap;
         sb->str = s;
-        memcpy(sb->str+sb->len, str, str_len);
+        memcpy(sb->str + sb->len, str, str_len);
         sb->len += str_len;
     }
 
     return str_succ;
 }
 
-int sb_push_cstr_sz(sb *sb, const char *str, size_t size){
-    if(sb == NULL || str == NULL){
+/*
+ * Append a fixed-size c-string payload into a heap-backed string buffer.
+ */
+int sb_push_cstr_sz(sb *sb, const char *str, size_t size)
+{
+    if (sb == NULL || str == NULL) {
         fprintf(stderr, "Erorr, NULL Pointer\n");
         return str_err;
     }
 
-    if(sb->str == NULL || sb->cap == 0){
+    if (sb->str == NULL || sb->cap == 0) {
         fprintf(stderr, "Erorr, Invalid String Buffer\n");
         return str_err;
     }
 
-    if(sb->cap > sb->len + size){
-        memcpy(sb->str+sb->len, str, size);
+    if (sb->cap >= sb->len + size) {
+        memcpy(sb->str + sb->len, str, size);
         sb->len += size;
-    }else{
-        size_t temp_cap = sb->cap * 2;
-        char * temp  = realloc(sb->str, sb->cap);
-        if(temp == NULL){
+    } else {
+        // Realloc must use the computed target capacity, not the previous capacity.
+        size_t temp_cap = sb->cap;
+        while (temp_cap < sb->len + size) {
+            temp_cap *= 2;
+        }
+
+        char *temp = realloc(sb->str, temp_cap);
+        if (temp == NULL) {
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;
         }
+
         sb->cap = temp_cap;
         sb->str = temp;
-        memcpy(sb->str+sb->len, str, size);
+        memcpy(sb->str + sb->len, str, size);
         sb->len += size;
     }
 
     return str_succ;
 }
 
-int sb_push_char(sb *sb, char ch){
-    if(sb->cap > sb->len + 1){
+/*
+ * Append one character into a heap-backed string buffer.
+ */
+int sb_push_char(sb *sb, char ch)
+{
+    if (sb == NULL || sb->str == NULL || sb->cap == 0) {
+        fprintf(stderr, "Erorr, Invalid String Buffer\n");
+        return str_err;
+    }
+
+    if (sb->cap >= sb->len + 1) {
         sb->str[sb->len] = ch;
         sb->len++;
-    }else{
+    } else {
         size_t temp_cap = sb->cap * 2;
-        char * temp  = realloc(sb->str, sb->cap);
-        if(temp == NULL){
+        char *temp = realloc(sb->str, temp_cap);
+        if (temp == NULL) {
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;
         }
+
         sb->str = temp;
         sb->str[sb->len] = ch;
         sb->len++;
@@ -505,8 +585,19 @@ int sb_push_char(sb *sb, char ch){
     return str_succ;
 }
 
-char * cstr_from_sb(const sb *sb){
+/*
+ * Expose sb as a null-terminated c-string in-place.
+ *
+ * Returns NULL if there is no room for the terminator.
+ */
+char *cstr_from_sb(const sb *sb)
+{
     assert(sb != NULL && sb->len > 0);
+
+    // Require room for a terminator to avoid writing past buffer bounds.
+    if (sb->len >= sb->cap)
+        return NULL;
+
     sb->str[sb->len] = 0;
     return sb->str;
 }

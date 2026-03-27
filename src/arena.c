@@ -59,25 +59,47 @@ ArenaList *create_ArenaList(size_t size){
     return arenaList;
 }
 
-// linked list of arenas in case the first arena got full
-//  so we can deallocat everything in the end
-void *arenaList_Alloc(ArenaList *arenalist, size_t size){
-    if(arenalist->arena.capacity >= arenalist->arena.cur_size + size){
-        return arena_Alloc(&arenalist->arena, size);
-    }else{
-        arenalist->next = malloc(sizeof(ArenaList));
+/*
+ * Allocate memory from the first arena-list node with enough free space.
+ *
+ * If no existing node can satisfy the request, append a new tail node.
+ * The new arena capacity is at least the requested size.
+ */
+void *arenaList_Alloc(ArenaList *arenalist, size_t size)
+{
+    assert(arenalist != NULL && size > 0);
 
-        if(arenalist->next == NULL){
-            fprintf(stderr, "Error, ArenaList Allocation Failed\n");
-            exit(-1);
+    // Traverse existing nodes before growing the list.
+    ArenaList *node = arenalist;
+
+    while (node->next != NULL) {
+        if (node->arena.capacity >= node->arena.cur_size + size) {
+            return arena_Alloc(&node->arena, size);
         }
-        
-        size_t capacity = arenalist->arena.capacity;
-        arenalist = arenalist->next;
-        arenalist->arena = create_Arena(capacity);
-        arenalist->next = NULL;
-        return arena_Alloc(&arenalist->arena, size);
+        node = node->next;
     }
+
+    // Check the last node as well.
+    if (node->arena.capacity >= node->arena.cur_size + size) {
+        return arena_Alloc(&node->arena, size);
+    }
+
+    // No node had enough space, append a new node.
+    node->next = malloc(sizeof(ArenaList));
+    if (node->next == NULL) {
+        fprintf(stderr, "Error, ArenaList Allocation Failed\n");
+        return NULL;
+    }
+
+    // Guarantee the new node can satisfy this exact request.
+    size_t capacity = node->arena.capacity;
+    if (size > capacity)
+        capacity = size;
+
+    node->next->arena = create_Arena(capacity);
+    node->next->next = NULL;
+
+    return arena_Alloc(&node->next->arena, size);
 }
 
 void *arenaList_Realloc(ArenaList * arenaList, void *p, size_t oldsz , size_t newsz){

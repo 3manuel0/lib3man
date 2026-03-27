@@ -1,6 +1,6 @@
 CC      = gcc
 AR      = ar
-CFLAGS  = -Wall -Wextra -Iincludes
+CFLAGS  = -Wall -Wextra -Werror -Iincludes -g -fsanitize=address
 ARFLAGS = rcs
 
 SRC := $(wildcard src/*.c)
