@@ -1,4 +1,7 @@
 #include "../includes/lib3man.h"
+#include <assert.h>
+#include <stddef.h>
+#include <string.h>
 
 // Importent replaced wirte with fwrite :
 // 1- for buffering meaning printing is faster
@@ -256,7 +259,7 @@ void sv_print(const sv *sv){
     // write(1, (char *)s->str, s->len); // write is too slow no buffering
 }
 
-void sv_writef(const sv *sv, FILE *file){
+void sv_fwrite(const sv *sv, FILE *file){
     if(sv == NULL){
         fwrite("NULL", 1, 4, file);
         return;
@@ -267,15 +270,14 @@ void sv_writef(const sv *sv, FILE *file){
     }
     fwrite(sv->str, 1, sv->len,file);
 }
-// string buffer functions ##################################################################
 
-// TODO: sb inside areana and arenaList ## Almost done
+// string buffer functions ##################################################################
 
 // creating a sb from char *
 sb sb_from_cstr(const char *str){
     assert(str != NULL);
     size_t len = strlen(str);
-    size_t cap = len * 4;
+    size_t cap = len * 2;
     char *temp = malloc(cap);
 
     if(temp == NULL){
@@ -296,11 +298,11 @@ sb create_sb_inside_arenaList(ArenaList **arenaList, size_t cap){
     return (sb){.str = temp, .len = 0, .cap = cap};
 }
 
-// TODO FIX THIS 
 
+// TODO TEST THESE SB FUNCTIONS
 sb sb_arenaList_from_cstr_sz(ArenaList **arenaList, const char *str, size_t size){
-    assert(arenaList != NULL && str != NULL && size != 0);
-    size_t cap = size * 4;
+    assert(arenaList != NULL && str != NULL && size > 0);
+    size_t cap = size * 2;
     char *temp = arenaList_Alloc(arenaList, cap);
     if(temp == NULL){
         fprintf(stderr, "Error, Allocation Failed");
@@ -310,9 +312,8 @@ sb sb_arenaList_from_cstr_sz(ArenaList **arenaList, const char *str, size_t size
     return (sb){.str = temp, .len = size, .cap = cap};
 }
 
-// TODO FIX THIS 
 int sb_arenaList_push_cstr_sz(ArenaList **arenaList, sb *sb, const char *str, size_t size){
-    assert(sb != NULL && str != NULL);
+    assert(sb != NULL && str != NULL && size > 0);
 
     if(sb->str == NULL || sb->cap == 0){
         fprintf(stderr, "Erorr, Invalid String Buffer\n");
@@ -323,12 +324,18 @@ int sb_arenaList_push_cstr_sz(ArenaList **arenaList, sb *sb, const char *str, si
         memcpy(sb->str+sb->len, str, size);
         sb->len += size;
     }else{
-        size_t temp_cap = sb->cap * 2;
-        char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, sb->cap * 2);
+        size_t temp_cap = sb->cap;
+
+        while (temp_cap <= size + sb->len) {
+            temp_cap = sb->cap * 2;
+        } 
+
+        char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, temp_cap);
         if(temp == NULL){
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;
         }
+
         sb->cap = temp_cap;
         sb->str = temp;
         memcpy(sb->str+sb->len, str, size);
@@ -339,7 +346,6 @@ int sb_arenaList_push_cstr_sz(ArenaList **arenaList, sb *sb, const char *str, si
 }
 
 // TODO FIX THIS 
-
 int sb_arenaList_push_sv(ArenaList **arenaList, sb *sb, sv sv){
     assert(sb != NULL && sv.str != NULL);
 
@@ -352,8 +358,13 @@ int sb_arenaList_push_sv(ArenaList **arenaList, sb *sb, sv sv){
         memcpy(sb->str+sb->len, sv.str, sv.len);
         sb->len += sv.len;
     }else{
-        size_t temp_cap = sb->cap * 2;
-        char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, sb->cap * 2);
+        size_t temp_cap = sb->cap;
+
+        while (temp_cap <= sv.len + sb->len) {
+            temp_cap = sb->cap * 2;
+        }
+
+        char * temp  = arenaList_Realloc(arenaList, sb->str, sb->cap, temp_cap);
         if(temp == NULL){
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;
@@ -367,60 +378,68 @@ int sb_arenaList_push_sv(ArenaList **arenaList, sb *sb, sv sv){
     return str_succ;
 }
 
-sb *sb_cat(sb *dest, sb  *src){
-
-    assert(dest->len > 0 && src->str != NULL && dest->str != NULL && src->len != 0);
-
-    if(dest->cap - 1 <  dest->len + src->len){
+int sb_cat(sb *dest, sb *src){
+    assert(dest != NULL && src != NULL);
+    assert(src->str != NULL && dest->str != NULL && src->len > 0 && dest->len > 0);
+   
+    if(dest->cap <= dest->len + src->len){
         size_t temp_len = (dest->len + src->len);
-        size_t temp_cap = temp_len * 2;
+        size_t temp_cap = dest->cap;
+
+        while(temp_cap <= dest->len + src->len){
+            temp_cap *= 2;
+        }
+
         char * temp_str = realloc(dest->str, temp_cap);
         if(temp_str == NULL){
             fprintf(stderr, "Error, allocation failed");
-            return NULL;
+            return str_err;
         }
         dest->str = temp_str;
         memcpy(&dest->str[dest->len],src->str , src->len);
         dest->len = temp_len;
         dest->cap = temp_cap;
         sb_free(src);
-        return dest;
+        return str_succ;
     }
     memcpy(&dest->str[dest->len],src->str , src->len);
     dest->len += src->len;
     sb_free(src);
-    return dest;
+    return str_succ;
 }
 
 sb sb_from_sv(const sv *sv){
+    assert(sv != NULL);
     assert(sv->len > 0 && sv->str != NULL);
 
-    char * temp = malloc(sv->len * 4);
+    size_t temp_cap = sv->len * 2;
+    char * temp = malloc(temp_cap);
 
     if(temp == NULL){
-        fprintf(stderr, "Error, Allocation Failed");
+        fprintf(stderr, "Error, String Allocation Failed\n");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
 
     memcpy(temp, sv->str, sv->len);
     
-    return (sb){.str = temp, .len = sv->len, .cap = sv->len*4};
+    return (sb){.str = temp, .len = sv->len, .cap = temp_cap};
 }
 
 int sb_push_sv(sb *sb, const sv *sv){
     assert(sb != NULL && sv != NULL);
-
-    if(sb->str == NULL || sv->str == NULL || sb->cap == 0){
-        fprintf(stderr, "Erorr, Invalid strings\n");
-        return str_err;
-    }
+    assert(sb->str != NULL && sv->str != NULL && sb->cap > 0);
 
     if(sb->cap > sb->len + sv->len){
         memcpy(sb->str+sb->len, sv->str, sv->len);
         sb->len += sv->len;
     }else{
-        size_t temp_cap = sb->cap * 2;
-        char * s  = realloc(sb->str, sb->cap);
+        size_t temp_cap = sb->cap;
+
+        while(temp_cap <= sb->len + sv->len){
+            temp_cap *= 2;
+        }
+
+        char * s  = realloc(sb->str, temp_cap);
         if(s == NULL){
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;
@@ -436,19 +455,20 @@ int sb_push_sv(sb *sb, const sv *sv){
 
 int sb_push_cstr(sb *sb, const char *str){
     assert(sb != NULL && str != NULL);
-
-    if(sb->str == NULL || sb->cap == 0){
-        fprintf(stderr, "Erorr, Invalid String Buffer\n");
-        return str_err;
-    }
+    assert(sb->str != NULL && sb->cap > 0);
 
     size_t str_len = strlen(str);
     if(sb->cap > sb->len + str_len){
         memcpy(sb->str+sb->len, str, str_len);
         sb->len += str_len;
     }else{
-        size_t temp_cap = sb->cap * 2;
-        char * s  = realloc(sb->str, sb->cap);
+        size_t temp_cap = sb->cap;
+
+        while(temp_cap <= sb->len + str_len){
+            temp_cap *= 2;
+        }
+
+        char * s  = realloc(sb->str, temp_cap);
         if(s == NULL){
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;
@@ -465,21 +485,25 @@ int sb_push_cstr(sb *sb, const char *str){
 int sb_push_cstr_sz(sb *sb, const char *str, size_t size){
     assert(sb != NULL && str != NULL && size > 0);
 
-    if(sb->str == NULL || sb->cap == 0){
-        fprintf(stderr, "Erorr, Invalid String Buffer\n");
-        return str_err;
-    }
+    assert(sb->str != NULL && sb->cap > 0);
 
     if(sb->cap > sb->len + size){
         memcpy(sb->str+sb->len, str, size);
         sb->len += size;
     }else{
-        size_t temp_cap = sb->cap * 2;
-        char * temp  = realloc(sb->str, sb->cap);
+        size_t temp_cap = sb->cap;
+
+        while(temp_cap <= sb->len + size){
+            temp_cap *= 2;
+        }
+
+        char * temp  = realloc(sb->str, temp_cap);
+
         if(temp == NULL){
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;
         }
+
         sb->cap = temp_cap;
         sb->str = temp;
         memcpy(sb->str+sb->len, str, size);
@@ -495,7 +519,7 @@ int sb_push_char(sb *sb, char ch){
         sb->len++;
     }else{
         size_t temp_cap = sb->cap * 2;
-        char * temp  = realloc(sb->str, sb->cap);
+        char * temp  = realloc(sb->str, temp_cap);
         if(temp == NULL){
             fprintf(stderr, "Erorr, Realocation Failed\n");
             return str_fail;

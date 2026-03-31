@@ -91,7 +91,7 @@ void sv_println(const sv *sv); // prints sdtring-view with new line(\n)
 
 void sv_print(const sv *sv); // prints sdtring-view  without new line
 
-void sv_writef(const sv *sv, FILE *file); // wirtes sv to a file or stdout/stderr
+void sv_fwrite(const sv *sv, FILE *file); // wirtes sv to a file (also stdout/stderr)
 
 // string_buffer functions ###########################################################
 sb sb_from_cstr(const char *str);// creating a string-buffer from char *
@@ -104,7 +104,7 @@ int sb_arenaList_push_cstr_sz(ArenaList **arenaList, sb *sb, const char *str, si
 
 int sb_arenaList_push_sv(ArenaList **arenaList, sb *sb, sv sv);
 
-sb *sb_cat(sb *dest, sb *src); // concatanate two string-buffers in the heap
+int sb_cat(sb *dest, sb *src); // concatanate two string-buffers in the heap
 
 sb sb_from_sv(const sv *sv); // creates a string-buffer from a string view in the heap
 

@@ -1,5 +1,7 @@
 #include "../includes/lib3man.h"
 #include <assert.h>
+#include <stdio.h>
+#include <string.h>
 
 Arena create_Arena(size_t arena_size){
     Arena arena = {0};
@@ -102,12 +104,16 @@ void *arenaList_Alloc(ArenaList **arenalist, size_t size){
     return arena_Alloc(&(*arenalist)->arena, size);
 }
 
-
-// TODO REWRITE THIS, DO NOT USE IT FOR NOW 
+// TODO MAKE THIS BETTER
 void *arenaList_Realloc(ArenaList **arenaList, void *p, size_t oldsz , size_t newsz){
-    assert(arenaList != NULL && p != NULL);
-    assert(newsz > oldsz && "new size is less or equals old size");
+    assert(arenaList != NULL && p != NULL && oldsz > 0 && newsz > 0 && newsz > oldsz);
+    
     size_t diff = newsz - oldsz;
+
+    if(diff == 0){
+        fprintf(stderr, "No size change no Reallocation\n");
+        return NULL;
+    } 
 
     if((char *)p + oldsz == (*arenaList)->arena.address && \
         (*arenaList)->arena.cur_size + diff <= (*arenaList)->arena.capacity)
@@ -115,11 +121,12 @@ void *arenaList_Realloc(ArenaList **arenaList, void *p, size_t oldsz , size_t ne
         (*arenaList)->arena.address = (char *)(*arenaList)->arena.address + diff;
         (*arenaList)->arena.cur_size += diff;
         return p;
-    }else{
-        void *temp = arenaList_Alloc(arenaList, newsz);
-        memcpy(temp, p, oldsz);
-        return temp;
     }
+
+    void *temp = arenaList_Alloc(arenaList, newsz);
+    memcpy(temp, p, oldsz);
+    return temp;
+
 }
 
 // free all the arenas we created
