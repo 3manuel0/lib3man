@@ -34,6 +34,7 @@ typedef struct {
 // for multiple ArenaList (linked list of Arenas)
 typedef struct ArenaList {
   Arena arena;
+  struct ArenaList *prev;
   struct ArenaList *next;
 } ArenaList;
 
@@ -44,50 +45,9 @@ void arena_free(Arena *arena);
 
 // for multiple Arenas (linked list of Arenas)
 ArenaList *create_ArenaList(size_t size);
-void *arenaList_Alloc(ArenaList *arenalist, size_t size);// reserves a size inside the arenaList and returns a pointer to the start of it
-void *arenaList_Realloc(ArenaList * arenaList, void *p, size_t oldsz , size_t newsz); 
+void *arenaList_Alloc(ArenaList **arenalist, size_t size);// reserves a size inside the arenaList and returns a pointer to the start of it
+void *arenaList_Realloc(ArenaList **arenaList, void *p, size_t oldsz , size_t newsz); // TODO REWRITE IT, IT DOESN"T WORK
 void arenaList_free(ArenaList *head);
-// #############################################################################
-
-// ############ Dynamic Array #################################################
-// I kinda hate this macros TODO: find another way maybe void *                #
-#define CREATE_ARR(type, name)                                                 \
-  typedef struct {                                                             \
-    type *data;                                                                \
-    size_t size;                                                               \
-    size_t capacity;                                                           \
-  } name;                                                                      \
-                                                                               \
-  static inline name name##_new(size_t capacity) {                             \
-    int *arr = malloc(capacity * sizeof(type));                                \
-    if (arr == NULL)                                                           \
-      return (name){.data = NULL, .size = 0, .capacity = 0};                   \
-    return (name){                                                             \
-        .data = arr,                                                           \
-        .size = 0,                                                             \
-        .capacity = capacity,                                                  \
-    };                                                                         \
-  }                                                                            \
-                                                                               \
-  static inline void name##_push(name *arr, type n) {                          \
-    if (arr->size < arr->capacity) {                                           \
-      arr->data[arr->size] = n;                                                \
-      arr->size++;                                                             \
-    } else {                                                                   \
-      if (arr->capacity == 0)                                                  \
-        arr->capacity = 5;                                                     \
-      arr->capacity *= 2;                                                      \
-      arr->data = realloc(arr->data, arr->capacity * sizeof(type));            \
-      arr->data[arr->size] = n;                                                \
-      arr->size++;                                                             \
-    }                                                                          \
-  }                                                                            \
-                                                                               \
-  static inline void name##_free(name *arr) {                                  \
-    free(arr->data);                                                           \
-    arr->capacity = 0;                                                         \
-    arr->size = 0;                                                             \
-  } // #
 // #############################################################################
 
 // ############ Length-Based string and dynamicly allocated string #############
@@ -109,6 +69,7 @@ enum { str_fail = -1, str_succ, str_err };
 
 #define sv_from_lit(str) (sv){str, sizeof(str) - 1}
 
+// TODO FIX SB AND SV FUNCTIONS, THERE ARE BUGS 
 // string-view functions ###############################################
 sv sv_from_cstr_sz(const char *str, size_t size);// creating a string view from char * + size
 
@@ -124,7 +85,7 @@ int sv_to_int64(const sv *sv, i64 *out);// return true if succesful, out is the 
 
 int sv_to_int32(const sv *sv, i32 *out);// return true if succesful, out is the pointer to which it writes the number
 
-int sv_to_float64(const sv *sv, f64 *out);// TODO
+int sv_to_float64(const sv *sv, f64 *out);// TODO : MORE TESTS 
 
 void sv_println(const sv *sv); // prints sdtring-view with new line(\n)
 
@@ -135,13 +96,13 @@ void sv_writef(const sv *sv, FILE *file); // wirtes sv to a file or stdout/stder
 // string_buffer functions ###########################################################
 sb sb_from_cstr(const char *str);// creating a string-buffer from char *
 
-sb create_sb_inside_arenaList(ArenaList *arenaList, size_t cap);
+sb create_sb_inside_arenaList(ArenaList **arenaList, size_t cap);
 
-sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size); // creating a string-buffer from char * with it's size inside an areanaList
+sb sb_arenaList_from_cstr_sz(ArenaList **arenaList, const char *str, size_t size); // creating a string-buffer from char * with it's size inside an areanaList
 
-int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, size_t size);
+int sb_arenaList_push_cstr_sz(ArenaList **arenaList, sb *sb, const char *str, size_t size);
 
-int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv);
+int sb_arenaList_push_sv(ArenaList **arenaList, sb *sb, sv sv);
 
 sb *sb_cat(sb *dest, sb *src); // concatanate two string-buffers in the heap
 
