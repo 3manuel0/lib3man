@@ -26,8 +26,10 @@ sv sv_from_sb(const sb *sb){
 
 // returns the number of sub strings (svs)
 size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NULL*/, size_t sv_arr_len /* can be 0*/){
+    assert(sb != NULL);
+    if(delimiter == 0 || sb->str == NULL || sb->len == 0) return 0;
+    
     size_t count = 0;
-    if(delimiter == 0) return 0;
     if(sv_arr == NULL || sv_arr_len == 0){
         for(size_t i = 0; i < sb->cap; i++){
             if(sb->str[i] == delimiter) count++;
@@ -59,6 +61,7 @@ size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NU
 }
 
 int sv_cmp(const sv *sv1, const sv *sv2){
+    assert(sv1 != NULL && sv2 != NULL);
     if(sv1->len != sv2->len) return false;
     for(size_t i = 0; i < sv1->len; i++){
         if(sv1->str[i] != sv2->str[i]) return false;
@@ -283,8 +286,8 @@ sb sb_from_cstr(const char *str){
     return (sb){.str = temp, .len = len, .cap = cap};
 }
 
-sb create_sb_inside_arenaList(ArenaList *arenaList, size_t cap){
-    assert(arenaList != NULL && cap > 0);
+sb create_sb_inside_arenaList(ArenaList **arenaList, size_t cap){
+    assert(arenaList != NULL && cap != 0);
     char *temp = arenaList_Alloc(arenaList, cap);
     if(temp == NULL){
         fprintf(stderr, "Error, Allocation Failed");
@@ -293,7 +296,10 @@ sb create_sb_inside_arenaList(ArenaList *arenaList, size_t cap){
     return (sb){.str = temp, .len = 0, .cap = cap};
 }
 
-sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size){
+// TODO FIX THIS 
+
+sb sb_arenaList_from_cstr_sz(ArenaList **arenaList, const char *str, size_t size){
+    assert(arenaList != NULL && str != NULL && size != 0);
     size_t cap = size * 4;
     char *temp = arenaList_Alloc(arenaList, cap);
     if(temp == NULL){
@@ -304,8 +310,9 @@ sb sb_arenaList_from_cstr_sz(ArenaList *arenaList, const char *str, size_t size)
     return (sb){.str = temp, .len = size, .cap = cap};
 }
 
-int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, size_t size){
-    assert(sb != NULL || str != NULL);
+// TODO FIX THIS 
+int sb_arenaList_push_cstr_sz(ArenaList **arenaList, sb *sb, const char *str, size_t size){
+    assert(sb != NULL && str != NULL);
 
     if(sb->str == NULL || sb->cap == 0){
         fprintf(stderr, "Erorr, Invalid String Buffer\n");
@@ -331,8 +338,10 @@ int sb_arenaList_push_cstr_sz(ArenaList *arenaList, sb *sb, const char *str, siz
     return str_succ;
 }
 
-int sb_arenaList_push_sv(ArenaList *arenaList, sb *sb, sv sv){
-    assert(sb != NULL || sv.str != NULL);
+// TODO FIX THIS 
+
+int sb_arenaList_push_sv(ArenaList **arenaList, sb *sb, sv sv){
+    assert(sb != NULL && sv.str != NULL);
 
     if(sb->str == NULL || sb->cap == 0){
         fprintf(stderr, "Erorr, Invalid String Buffer\n");
@@ -426,10 +435,7 @@ int sb_push_sv(sb *sb, const sv *sv){
 }
 
 int sb_push_cstr(sb *sb, const char *str){
-    if(sb == NULL || str == NULL){
-        fprintf(stderr, "Erorr, NULL Pointer\n");
-        return str_err;
-    }
+    assert(sb != NULL && str != NULL);
 
     if(sb->str == NULL || sb->cap == 0){
         fprintf(stderr, "Erorr, Invalid String Buffer\n");
@@ -457,10 +463,7 @@ int sb_push_cstr(sb *sb, const char *str){
 }
 
 int sb_push_cstr_sz(sb *sb, const char *str, size_t size){
-    if(sb == NULL || str == NULL){
-        fprintf(stderr, "Erorr, NULL Pointer\n");
-        return str_err;
-    }
+    assert(sb != NULL && str != NULL && size > 0);
 
     if(sb->str == NULL || sb->cap == 0){
         fprintf(stderr, "Erorr, Invalid String Buffer\n");
@@ -544,6 +547,7 @@ void sb_writef(const sb *sb, FILE *file){
 }
 
 void sb_free(sb *sb){
+    assert(sb != NULL);
     free(sb->str);
     sb->str = NULL;
     sb->cap = 0;
