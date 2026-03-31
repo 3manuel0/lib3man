@@ -1,10 +1,35 @@
 #include "includes/lib3man.h"
-#include <stdio.h>
-#include <string.h>
 
+void testing_sv_to_float64();
 
 int main(){
-    sv tests[] = {
+    // Testing the fixed arenaList 
+    // THESE TESTS WORK
+    ArenaList * a = create_ArenaList(KiB(5));
+    printf("capacity :%zu adress :%p cur_size: %zu\n", a->arena.capacity, a->arena.address, a->arena.cur_size);
+    
+    string_view str = sv_from_lit("Testing testing 1234 sdasdadas sdasdasdasd asdasdadasdaasd adadads");
+    
+    for(int i = 0; i < 50; i++){
+        arenaList_Alloc(&a, str.len);
+    }
+
+    char *s = arenaList_Alloc(&a, 800);
+    s[0] = 'B';
+    u8 * example2 = arenaList_Alloc(&a, KiB(5));
+    u8 * example1 = arenaList_Alloc(&a, 800);
+    printf("example1 %p shld be allocated in first arena\n", example1);
+    printf("example2 %p shld be allocated in a new arena = %s\n", example2, example2 == (u8 *)a->arena.memory ? "True" : "False");
+    // s[0] = '1';
+    printf("capacity :%zu adress :%p cur_size: %zu next: %p prev: %p\n", a->arena.capacity, a->arena.address, a->arena.cur_size, a->next, a->prev);
+    
+    
+    arenaList_free(a);
+    return 0;
+}
+
+void testing_sv_to_float64(){
+        sv tests[] = {
         sv_from_lit("123.456"),
         sv_from_lit("-987"),
         sv_from_lit("000.000100"),
@@ -26,43 +51,4 @@ int main(){
         if(s)
             printf("the output = %lf\n", t);
     }
-    return 0;
-}
-
-void last_test(){
-    string_view strv = sv_from_lit("2147483647");
-    i32 n_ = 0;
-    int s = sv_to_int32(&strv, &n_);
-    printf("successful:%s number32:%d\n", s ? "true" : "false", n_);
-    i64 n = 0;
-    s = sv_to_int64(&strv, &n);
-    printf("successful:%s number64:%ld\n", s ? "true" : "false", n);
-    // double experiment = 1.7976931348623157891575E+308;
-    double experiment = 645644564.5555654464456456664;
-    long e = 0x7FF0000000000000;
-    printf("%ld %.19lf %lb\n", *(long*)&experiment, *(double*)&e, e);
-}
-
-void old_test(){
-        // TODO : test string sb_push_str and sstr
-    sb s = sb_from_sv(&sv_from_lit("anger builds"));
-    sb_push_sv(&s, &sv_from_lit(" anger builds"));
-    sb_push_sv(&s, &sv_from_lit(" anger builds"));
-    printf("cap:%zu len:%zu p:%p\n", s.cap, s.len, s.str);
-    sb_push_sv(&s, &sv_from_lit(" anger builds"));
-    printf("cap:%zu len:%zu p:%p\n", s.cap, s.len, s.str);
-    // for(int i = 0; i < 100000; i++)
-    //     sb_println(&s);
-    // 310 <-> 298 write
-    // 182 <-> 160 fwrite fwrite is faster 
-    ArenaList *a = create_ArenaList(MiB(250));
-    sb test = sb_arenaList_from_cstr_sz(a, "anger builds\n", 13);
-    printf("%p\n", test.str);
-    sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
-    printf("%p\n", test.str);
-    sb_arenaList_push_cstr_sz(a, &test, "anger builds\n", 13);
-    printf("%p\n", test.str);
-    // TESTS
-    printf("%zu\n", sb_split_svs_char(&s, ' ', NULL, 0));
-    sb_println(&s);
 }
