@@ -260,16 +260,16 @@ void sv_print(const sv *sv){
     // write(1, (char *)s->str, s->len); // write is too slow no buffering
 }
 
-void sv_fwrite(const sv *sv, FILE *file){
+void sv_fwrite(const sv *sv, FILE *stream){
     if(sv == NULL){
-        fwrite("NULL", 1, 4, file);
+        fwrite("NULL", 1, 4, stream);
         return;
     }
     if(sv->str == NULL || sv->len == 0){
-        fwrite("EMPTY_STR", 1, 9, file);
+        fwrite("EMPTY_STR", 1, 9, stream);
         return;
     }
-    fwrite(sv->str, 1, sv->len,file);
+    fwrite(sv->str, 1, sv->len,stream);
 }
 
 // string buffer functions ##################################################################
@@ -594,16 +594,25 @@ void sb_print(const sb *sb){
     fwrite(sb->str, 1, sb->len,stdout);
 }
 
-void sb_writef(const sb *sb, FILE *file){
+int sb_fprint(const sb *sb, FILE *stream){
+    assert(sb != NULL);
+    if(sb->str == NULL || sb->len == 0){
+        return -1;
+    }
+    fwrite(sb->str, 1, sb->len,stream);
+    return sb->len;
+}
+
+void sb_fwrite(const sb *sb, FILE *stream){
     if(sb == NULL){
-        fwrite("NULL", 1, 4, file);
+        fwrite("NULL", 1, 4, stream);
         return;
     }
     if(sb->str == NULL || sb->len == 0){
-        fwrite("EMPTY_STR", 1, 9, file);
+        fwrite("EMPTY_STR", 1, 9, stream);
         return;
     }
-    fwrite(sb->str, 1, sb->len,file);
+    fwrite(sb->str, 1, sb->len,stream);
 }
 
 void sb_free(sb *sb){

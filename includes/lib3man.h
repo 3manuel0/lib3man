@@ -128,7 +128,9 @@ void sb_println(const sb *sb); // prints a string-buffer (current used bytes (ch
 
 void sb_print(const sb *sb); // prints a string-buffer without new line
 
-void sb_writef(const sb *sb, FILE *file);// wirtes sb to a file or stdout/stderr
+int sb_fprint(const sb *sb, FILE *stream);// prints sb to file, it returns len else -1
+
+void sb_fwrite(const sb *sb, FILE *stream);// wirtes sb to a file or stdout/stderr
 
 void sb_free(sb *sb); // frees string-buffer in the heap
 // ###########################################################################################
