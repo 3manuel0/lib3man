@@ -1,9 +1,10 @@
 #include "../includes/lib3man.h"
 #include <assert.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <string.h>
 
-// Importent replaced wirte with fwrite :
+// Important replaced wirte with fwrite :
 // 1- for buffering meaning printing is faster
 // 2- compatibility with windows 
 // TODO: sv inside areanaList
@@ -273,6 +274,16 @@ void sv_fwrite(const sv *sv, FILE *file){
 
 // string buffer functions ##################################################################
 
+//create a an empty sb size is 0
+sb create_sb_empty(size_t cap){
+    assert(cap > 0);
+    char *temp = malloc(cap);
+    if(temp == NULL){
+        return (sb){NULL, 0, 0};
+    }
+    return (sb){.str = temp, 0, cap };
+}
+
 // creating a sb from char *
 sb sb_from_cstr(const char *str){
     assert(str != NULL);
@@ -538,6 +549,31 @@ char * cstr_from_sb(const sb *sb){
     return sb->str;
 }
 
+int sb_readLine(sb *sb, FILE *stream){
+    assert(stream != NULL && sb != NULL);
+    assert(sb->cap > 0 && sb->str != NULL);
+    int count = 0;
+    int ch = 0;
+    while((ch = fgetc(stream)) != EOF && ch != '\n'){
+        sb_push_char(sb, ch);
+        count++;
+    }
+    return count;
+}
+
+int sb_fread_all(sb *sb, FILE *stream){
+    assert(stream != NULL && sb != NULL);
+    assert(sb->cap > 0 && sb->str != NULL);
+    int count = 0;
+    int ch = 0;
+    while((ch = fgetc(stream)) != EOF){
+        if(stream == stdin && ch == '\n') break;
+        sb_push_char(sb, ch);
+        count++;
+    }
+    return count;
+}
+
 void sb_println(const sb *sb){
     if(sb->str == NULL){
         // write(1, "empty\n", 6);
@@ -577,3 +613,4 @@ void sb_free(sb *sb){
     sb->cap = 0;
     sb->len = 0;
 }
+
