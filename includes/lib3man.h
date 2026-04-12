@@ -48,7 +48,17 @@ ArenaList *create_ArenaList(size_t size);
 void *arenaList_Alloc(ArenaList **arenalist, size_t size);// reserves a size inside the arenaList and returns a pointer to the start of it
 void *arenaList_Realloc(ArenaList **arenaList, void *p, size_t oldsz , size_t newsz); // TODO REWRITE IT, IT DOESN"T WORK
 void arenaList_free(ArenaList *head);
-// #############################################################################
+// #########################################################
+
+// ############ Binary TREE ##############################################
+// TODO: IMPLIMENT BINARY TREE's FUNCTIONS
+typedef struct bt_node {
+  i64 value;
+  struct bt_node *right;
+  struct bt_node *left;
+}bt_node;
+
+// ###########################################################################
 
 // ############ Length-Based string and dynamicly allocated string #############
 typedef struct {
