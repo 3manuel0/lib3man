@@ -94,6 +94,8 @@ void sv_print(const sv *sv); // prints sdtring-view  without new line
 void sv_fwrite(const sv *sv, FILE *file); // wirtes sv to a file (also stdout/stderr)
 
 // string_buffer functions ###########################################################
+sb create_sb_empty(size_t cap);
+
 sb sb_from_cstr(const char *str);// creating a string-buffer from char *
 
 sb create_sb_inside_arenaList(ArenaList **arenaList, size_t cap);
@@ -117,6 +119,10 @@ int sb_push_cstr_sz(sb *sb, const char *str, size_t size);// append (push) a cha
 int sb_push_char(sb *sb, char ch);// append (push) a charachter inside a string-buffer
 
 char * cstr_from_sb(const sb *sb);// char * with /0 at the end from string_buffer
+
+int sb_readLine(sb *sb, FILE *stream);
+
+int sb_fread_all(sb *sb, FILE *stream);
 
 void sb_println(const sb *sb); // prints a string-buffer (current used bytes (chars)) with new line(\n)
 
