@@ -544,7 +544,7 @@ int sb_push_char(sb *sb, char ch){
 }
 
 char * cstr_from_sb(const sb *sb){
-    assert(sb != NULL && sb->len > 0);
+    assert(sb != NULL && sb->cap > 0);
     sb->str[sb->len] = 0;
     return sb->str;
 }
