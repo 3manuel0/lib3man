@@ -1,0 +1,30 @@
+CC      = cl
+AR      = lib
+
+CFLAGS  = /nologo /W4 /Iincludes /c
+LDFLAGS = /nologo
+
+SRC = src\arena.c src\string.c
+OBJ = src\arena.obj src\string.obj
+
+LIB = lib\3man.lib
+
+all: $(LIB) main.exe
+
+$(LIB): $(OBJ)
+	$(AR) /OUT:$(LIB) $(OBJ)
+
+src\file1.obj: src\file1.c
+	$(CC) $(CFLAGS) src\arena.c /Fo$@
+
+src\file2.obj: src\file2.c
+	$(CC) $(CFLAGS) src\string.c /Fo$@
+
+main.obj: main.c
+	$(CC) $(CFLAGS) main.c /Fo$@
+
+main.exe: main.obj $(LIB)
+	link $(LDFLAGS) main.obj $(LIB) /OUT:main.exe
+
+clean:
+	del /Q src\*.obj main.obj $(LIB) main.exe
