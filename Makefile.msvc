@@ -1,30 +1,32 @@
 CC      = cl
 AR      = lib
 
+
 CFLAGS  = /nologo /W4 /Iincludes /c
-LDFLAGS = /nologo
+
+LDFLAGS = /nologo /MACHINE:X64
 
 SRC = src\arena.c src\string.c
 OBJ = src\arena.obj src\string.obj
 
-LIB = lib\3man.lib
+MY_LIB = lib\lib3man.lib
 
-all: $(LIB) main.exe
+all: $(MY_LIB) main.exe
 
-$(LIB): $(OBJ)
-	$(AR) /OUT:$(LIB) $(OBJ)
+$(MY_LIB): $(OBJ)
+	$(AR) /OUT:$(MY_LIB) $(OBJ)
 
-src\file1.obj: src\file1.c
-	$(CC) $(CFLAGS) src\arena.c /Fo$@
+src\arena.obj: src\arena.c
+	$(CC) $(CFLAGS) /Fo$@ src\arena.c
 
-src\file2.obj: src\file2.c
-	$(CC) $(CFLAGS) src\string.c /Fo$@
+src\string.obj: src\string.c
+	$(CC) $(CFLAGS) /Fo$@ src\string.c
 
 main.obj: main.c
-	$(CC) $(CFLAGS) main.c /Fo$@
+	$(CC) $(CFLAGS) /Fo$@ main.c
 
-main.exe: main.obj $(LIB)
-	link $(LDFLAGS) main.obj $(LIB) /OUT:main.exe
+main.exe: main.obj $(MY_LIB)
+	link $(LDFLAGS) main.obj $(MY_LIB) /OUT:main.exe
 
 clean:
-	del /Q src\*.obj main.obj $(LIB) main.exe
+	del /Q src\*.obj main.obj $(MY_LIB) main.exe
