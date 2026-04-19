@@ -295,7 +295,7 @@ sb sb_from_cstr(const char *str){
         fprintf(stderr, "Error, Allocation Failed");
         return (sb){.str = NULL, .len = 0, .cap = 0};
     }
-
+    memcpy(temp, str, len);
     return (sb){.str = temp, .len = len, .cap = cap};
 }
 

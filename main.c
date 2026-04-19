@@ -34,6 +34,8 @@ int main(){
     FILE * f = fopen("src/string.c", "rb");
     sb_fread_all(&str2, f);
     sb_print(&str2);
+    sb sb_fc = sb_from_cstr("this is just a test");
+    sb_println(&sb_fc);
     return 0;
 }
 
