@@ -31,7 +31,7 @@ u32 u32_random(void) {
     return value;
 }
 
-f64 random_range(f64 min, f64 max){
+f64 f64_randrange(f64 min, f64 max){
     f64 u = (f64)u32_random() / (f64)UINT32_MAX;
     return min + u * (max - min);
 }
