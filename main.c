@@ -1,4 +1,5 @@
 #include "includes/lib3man.h"
+#include <stddef.h>
 #include <stdio.h>
 
 void testing_sv_to_float64();
@@ -36,6 +37,9 @@ int main(){
     sb_print(&str2);
     sb sb_fc = sb_from_cstr("this is just a test");
     sb_println(&sb_fc);
+    for(size_t i = 0; i < 20; i++){
+        printf("%u %.2lf\n", u32_random(), random_range(16.0, 55.0));
+    }
     return 0;
 }
 

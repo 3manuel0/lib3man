@@ -144,5 +144,22 @@ void sb_fwrite(const sb *sb, FILE *stream);// wirtes sb to a file or stdout/stde
 
 void sb_free(sb *sb); // frees string-buffer in the heap
 // ###########################################################################################
+// Utility ###########################################################
+#ifdef _WIN32
+  #include <windows.h>
+  #include <bcrypt.h>
+  #pragma comment(lib, "bcrypt.lib")
 
+#elif defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__)
+  #include <stdlib.h> // arc4random_buf
+
+#else
+  #include <sys/random.h>
+  #include <errno.h>
+#endif
+
+f64 random_range(f64 min, f64 max);
+
+u32 u32_random(void);
+// ###########################################################################################
 #endif
