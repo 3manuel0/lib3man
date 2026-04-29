@@ -158,8 +158,13 @@ void sb_free(sb *sb); // frees string-buffer in the heap
   #include <errno.h>
 #endif
 
+u32 u32_random(void);
+
 f64 f64_randrange(f64 min, f64 max);
 
-u32 u32_random(void);
+f32 f32_randrange(f32 min, f32 max);
+
+u32 u32_randrange(u32 min, u32 max);
+
 // ###########################################################################################
 #endif

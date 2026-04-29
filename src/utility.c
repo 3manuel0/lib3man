@@ -35,3 +35,12 @@ f64 f64_randrange(f64 min, f64 max){
     f64 u = (f64)u32_random() / (f64)UINT32_MAX;
     return min + u * (max - min);
 }
+
+f32 f32_randrange(f32 min, f32 max){
+    f32 u = (f32)u32_random() / (f32)UINT32_MAX;
+    return min + u * (max - min);
+}
+
+u32 u32_randrange(u32 min, u32 max){
+    return min + (u32_random() % (max - min + 1));
+}
