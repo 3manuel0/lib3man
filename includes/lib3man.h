@@ -159,7 +159,7 @@ void sb_free(sb *sb); // frees string-buffer in the heap
   #include <sys/random.h>
   #include <errno.h>
 #endif
-// A hardware-backed entropy harvester that retrieves a cryptographically secure random 32-bit integer from the operating system's kernel pool.
+
 u32 u32_entropy_random(void);//os based unsigned 32bit integer pseudo-random entropy generator
 
 f64 f64_random_range(f64 min, f64 max);// return float 64bit (double) based on a range [min, max]
