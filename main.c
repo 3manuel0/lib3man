@@ -4,7 +4,38 @@
 
 void testing_sv_to_float64();
 
+
 int main(){
+    // testing matrix
+    Matrix m = matrix_create(4, 3);
+    Matrix b = matrix_create(4, 3);
+    matrix_fill(&m, 20);
+    matrix_fill(&b, 60);
+    matrix_print(m);
+    matrix_scale(&m, 2.5);
+    matrix_add(&m, b);
+    printf("----------------------------\n");
+    matrix_print(m);
+    printf("----------------------------\n");
+    matrix_sub(&m, b);
+    matrix_print(m);
+    printf("----------------------------\n");
+    matrix_randomize(&m, -10, 105.0);
+    // matrix_map(&m, sigmoid);
+    matrix_print(m);
+    printf("----------------------------\n");
+    Matrix s = matrix_copy(m);
+    matrix_sub(&s, b);
+    matrix_print(s);
+    // Free the memory that has data and reset the matrix
+    matrix_free(&m);
+    matrix_free(&b);
+    matrix_free(&s);
+}
+
+
+
+int testing_sb(){
     // Testing the fixed arenaList 
     // THESE TESTS WORK
     // ArenaList * a = create_ArenaList(KiB(5));
@@ -38,7 +69,7 @@ int main(){
     sb sb_fc = sb_from_cstr("this is just a test");
     sb_println(&sb_fc);
     for(size_t i = 0; i < 20; i++){
-        printf("%u %.2lf\n", u32_random(), f64_randrange(16.0, 55.0));
+        printf("%u %.2lf\n", u32_entropy_random(), f64_random_range(16.0, 55.0));
     }
     return 0;
 }

@@ -175,7 +175,7 @@ typedef struct Matrix{
     size_t rows;
     size_t cols;
 }Matrix;
-
+// TODO : I NEED TO FINISH THIS MATRix functions
 Matrix matrix_create(size_t rows, size_t cols);
 
 int matrix_fill(Matrix *matrix, f64 value);
