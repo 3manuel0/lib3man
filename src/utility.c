@@ -1,6 +1,6 @@
 #include "../includes/lib3man.h"
 
-u32 u32_random(void) {
+u32 u32_entropy_random(void) {
     u32 value = 0;
 
     #ifdef _WIN32
@@ -31,16 +31,16 @@ u32 u32_random(void) {
     return value;
 }
 
-f64 f64_randrange(f64 min, f64 max){
-    f64 u = (f64)u32_random() / (f64)UINT32_MAX;
+f64 f64_random_range(f64 min, f64 max){
+    f64 u = (f64)u32_entropy_random() / (f64)UINT32_MAX;
     return min + u * (max - min);
 }
 
-f32 f32_randrange(f32 min, f32 max){
-    f32 u = (f32)u32_random() / (f32)UINT32_MAX;
+f32 f32_random_range(f32 min, f32 max){
+    f32 u = (f32)u32_entropy_random() / (f32)UINT32_MAX;
     return min + u * (max - min);
 }
 
-u32 u32_randrange(u32 min, u32 max){
-    return min + (u32_random() % (max - min + 1));
+u32 u32_random_range(u32 min, u32 max){
+    return min + (u32_entropy_random() % (max - min + 1));
 }
