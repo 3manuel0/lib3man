@@ -15,15 +15,24 @@ It includes some basic data structures :
 
 ```text
 .
-├── src/
-│   ├── arena.c    # Memory Arenas and Arena-list
-│   ├── string.c   # String view, String buffer
-│   ├── matrix.c   # Matrix
-│   └── utility.c  # os based pseudo-random
-└── include/
-    └── lib3man.h      # Unified header
+├── includes
+│   └── lib3man.h   # Unified header file
+├── lib
+│   ├── lib3man.a   # Static library (Mingw (windows), gcc, clang)
+│   └── lib3man.lib # Static library (msvc)
+│
+├── main.c          # Testing the library
+│
+└── src
+    ├── arena.c     # Memory Arenas and Arena-list
+    ├── matrix.c    # String view, String buffer
+    ├── string.c    # Matrix
+    └── utility.c   # OS based pseudo-random
+
 ```
 
 ### Goals
 
-The goal of this library is to explore low-level C design, memory management, math, and create a useful library to use for my other projects.
+- Explore low-level C design, memory management, math etc...
+- Build a personal "Standard Library" for my other projects.
+- Having fun while also understanding complex concepts.
