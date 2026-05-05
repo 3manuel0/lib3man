@@ -85,11 +85,11 @@ void matrix_map(Matrix *matrix, f64(*func)(f64)){
 
 void matrix_print(Matrix matrix){
     for(size_t i = 0; i < matrix.rows; i++){
-        printf("|");
+        printf("[");
         for(size_t j = 0; j < matrix.cols; j++){
-            printf(" %.2lf ", matrix.mtx[(i * matrix.cols) + j]);
+            printf(" %6.2lf ", matrix.mtx[(i * matrix.cols) + j]);
         }
-        printf("|");
+        printf("]");
         printf("\n");
     }
 }

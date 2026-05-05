@@ -3,10 +3,15 @@
 #include <stdio.h>
 
 void testing_sv_to_float64();
-
+void testing_sb();
+void testing_matrix();
 
 int main(){
-    // testing matrix
+    // testing_sb();
+    testing_matrix();
+}
+
+void testing_matrix(){
     Matrix m = matrix_create(4, 3);
     Matrix b = matrix_create(4, 3);
     matrix_fill(&m, 20);
@@ -27,51 +32,25 @@ int main(){
     Matrix s = matrix_copy(m);
     matrix_sub(&s, b);
     matrix_print(s);
-    // Free the memory that has data and reset the matrix
+    // Free the memory that has the data and reset the matrix (rows = 0 & cols = 0)
     matrix_free(&m);
     matrix_free(&b);
     matrix_free(&s);
 }
 
-
-
-int testing_sb(){
-    // Testing the fixed arenaList 
-    // THESE TESTS WORK
-    // ArenaList * a = create_ArenaList(KiB(5));
-    // printf("capacity :%zu adress :%p cur_size: %zu\n", a->arena.capacity, a->arena.address, a->arena.cur_size);
-    
-    // string_view str = sv_from_lit("Testing testing 1234 sdasdadas sdasdasdasd asdasdadasdaasd adadads");
-    
-    // for(int i = 0; i < 50; i++){
-    //     arenaList_Alloc(&a, str.len);
-    // }
-
-    // char *s = arenaList_Alloc(&a, 800);
-    // s[0] = 'B';
-    // u8 * example2 = arenaList_Alloc(&a, KiB(5));
-    // u8 * example1 = arenaList_Alloc(&a, 800);
-    // printf("example1 %p shld be allocated in first arena\n", example1);
-    // printf("example2 %p shld be allocated in a new arena = %s\n", example2, example2 == (u8 *)a->arena.memory ? "True" : "False");
-    // // s[0] = '1';
-    // printf("capacity :%zu adress :%p cur_size: %zu next: %p prev: %p\n", a->arena.capacity, a->arena.address, a->arena.cur_size, a->next, a->prev);
-    
-    
-    // arenaList_free(a);
-    sb str = create_sb_empty(50);
-    sb_readLine(&str, stdin);
-    sb_println(&str);
+void testing_sb(){
+    string_buffer str = create_sb_empty(50);
+    sb_freadln(&str, stdin);
+    sb_println(str);
     sb_free(&str);
-    sb str2 = create_sb_empty(100);
+    string_buffer str2 = create_sb_empty(100);
     FILE * f = fopen("src/string.c", "rb");
     sb_fread_all(&str2, f);
-    sb_print(&str2);
-    sb sb_fc = sb_from_cstr("this is just a test");
-    sb_println(&sb_fc);
-    for(size_t i = 0; i < 20; i++){
-        printf("%u %.2lf\n", u32_entropy_random(), f64_random_range(16.0, 55.0));
-    }
-    return 0;
+    sb_print(str2);
+    string_buffer sb_fc = sb_from_cstr("this is just a test");
+    sb_println(sb_fc);
+    sb_free(&str2);
+    sb_free(&sb_fc);
 }
 
 void testing_sv_to_float64(){

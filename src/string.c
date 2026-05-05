@@ -28,7 +28,7 @@ sv sv_from_sb(const sb *sb){
     return (sv){.str = sb->str, .len = sb->len};
 }
 
-// returns the number of sub strings (svs)
+// returns the number of sub strings (string_views)
 size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NULL*/, size_t sv_arr_len /* can be 0*/){
     assert(sb != NULL);
     if(delimiter == 0 || sb->str == NULL || sb->len == 0) return 0;
@@ -208,7 +208,7 @@ int sv_to_float64(const sv *sv, f64 *out){
         }
 
         // exponent = neg ? pow(10, -exp) : pow(10, exp);
-        // no need for pow also no need to link with math (-lm)
+        // no need for pow I don't want to link with math (-lm)
         if(neg){
             while (exp > 0) { exponent /= 10;
                 exp--;
@@ -232,44 +232,29 @@ int sv_to_float64(const sv *sv, f64 *out){
     return true;
 }
 
-void sv_println(const sv *sv){
-    if(sv == NULL){
-        fwrite("NULL\n", 1, 5, stdout);
+void sv_println(string_view sv){
+    if(sv.str == NULL || sv.len == 0){
+        fwrite("EMPTY_STRING_VIEW\n", 1, 18, stdout);
         return;
     }
-    if(sv->str == NULL || sv->len == 0){
-        fwrite("EMPTY_STR\n", 1, 10, stdout);
-        return;
-    }
-    fwrite(sv->str, 1, sv->len,stdout);
+    fwrite(sv.str, 1, sv.len,stdout);
     fwrite("\n", 1, 1,stdout);
     // write(1, (char *)s->str, s->len); // write is too slow no buffering
     // write(1, "\n", 1);
 }
 
-void sv_print(const sv *sv){
-    if(sv == NULL){
-        fwrite("NULL", 1, 4, stdout);
+void sv_print(string_view sv){
+    if(sv.str == NULL || sv.len == 0){
+        fwrite("EMPTY_STRING_VIEW", 1, 17, stdout);
         return;
     }
-    if(sv->str == NULL || sv->len == 0){
-        fwrite("EMPTY_STR", 1, 9, stdout);
-        return;
-    }
-    fwrite(sv->str, 1, sv->len,stdout);
+    fwrite(sv.str, 1, sv.len,stdout);
     // write(1, (char *)s->str, s->len); // write is too slow no buffering
 }
 
-void sv_fwrite(const sv *sv, FILE *stream){
-    if(sv == NULL){
-        fwrite("NULL", 1, 4, stream);
-        return;
-    }
-    if(sv->str == NULL || sv->len == 0){
-        fwrite("EMPTY_STR", 1, 9, stream);
-        return;
-    }
-    fwrite(sv->str, 1, sv->len,stream);
+void sv_fwrite(string_view sv, FILE *stream){
+    if(sv.str == NULL || sv.len == 0) return;
+    fwrite(sv.str, 1, sv.len,stream);
 }
 
 // string buffer functions ##################################################################
@@ -549,7 +534,16 @@ char * cstr_from_sb(const sb *sb){
     return sb->str;
 }
 
-int sb_readLine(sb *sb, FILE *stream){
+int sb_cmp(string_buffer sb1, string_buffer sb2){
+    assert(sb1.str != NULL && sb2.str != NULL);
+    if(sb1.len != sb2.len) return false;
+    for(size_t i = 0; i < sb1.len; i++){
+        if(sb1.str[i] != sb2.str[i]) return false;
+    }
+    return true;
+}
+
+int sb_freadln(sb *sb, FILE *stream){
     assert(stream != NULL && sb != NULL);
     assert(sb->cap > 0 && sb->str != NULL);
     int count = 0;
@@ -574,45 +568,37 @@ int sb_fread_all(sb *sb, FILE *stream){
     return count;
 }
 
-void sb_println(const sb *sb){
-    if(sb->str == NULL){
+void sb_println(string_buffer sb){
+    if(sb.str == NULL){
         // write(1, "empty\n", 6);
-        fwrite("empty\n", 1, 6, stdout);
+        fwrite("EMPTY_STRING_BUFFER", 1, 20, stdout);
         return;
     }
-    fwrite(sb->str, 1, sb->len,stdout);
+    fwrite(sb.str, 1, sb.len,stdout);
     fwrite("\n", 1, 1,stdout);
 }
 
-void sb_print(const sb *sb){
-    if(sb->str == NULL){
+void sb_print(string_buffer sb){
+    if(sb.str == NULL || sb.len == 0){
         // write(1, "empty", 5);
-        fwrite("empty", 1, 5, stdout);
+        fwrite("EMPTY_STRING_BUFFER", 1, 19, stdout);
         return;
     }
     // write(1, s->str, s->len);
-    fwrite(sb->str, 1, sb->len,stdout);
+    fwrite(sb.str, 1, sb.len,stdout);
 }
 
-int sb_fprint(const sb *sb, FILE *stream){
-    assert(sb != NULL);
-    if(sb->str == NULL || sb->len == 0){
+int sb_fprint(string_buffer sb, FILE *stream){
+    if(sb.str == NULL || sb.len == 0){
         return -1;
     }
-    fwrite(sb->str, 1, sb->len,stream);
-    return sb->len;
+    fwrite(sb.str, 1, sb.len,stream);
+    return sb.len;
 }
 
-void sb_fwrite(const sb *sb, FILE *stream){
-    if(sb == NULL){
-        fwrite("NULL", 1, 4, stream);
-        return;
-    }
-    if(sb->str == NULL || sb->len == 0){
-        fwrite("EMPTY_STR", 1, 9, stream);
-        return;
-    }
-    fwrite(sb->str, 1, sb->len,stream);
+void sb_fwrite(string_buffer sb, FILE *stream){
+    if(sb.str == NULL || sb.len == 0) return;
+    fwrite(sb.str, 1, sb.len,stream);
 }
 
 void sb_free(sb *sb){
