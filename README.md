@@ -27,8 +27,8 @@ Lib3man is a small C library I'm building for learning purposes and to use in my
 │
 └── src
     ├── arena.c     # Memory Arenas and Arena-list
-    ├── matrix.c    # String view, String buffer
-    ├── string.c    # Matrix
+    ├── matrix.c    # Matrix
+    ├── string.c    # String view, String buffer
     └── utility.c   # OS based pseudo-random
 
 ```
