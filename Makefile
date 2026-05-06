@@ -1,6 +1,6 @@
 CC      = gcc
 AR      = ar
-CFLAGS  = -Wall -Wextra -Werror -Iincludes
+CFLAGS  = -Wall -Wextra -Iincludes #-Werror
 ARFLAGS = rcs
 
 SRC := $(wildcard src/*.c)

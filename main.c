@@ -12,8 +12,10 @@ int main(){
 }
 
 void testing_matrix(){
-    Matrix m = matrix_create(4, 3);
-    Matrix b = matrix_create(4, 3);
+    Matrix m = matrix_create_empty(4, 3);
+    Matrix b = matrix_create_empty(4, 3);
+    f64 arr[3][2] = {{6, 5}, {4, 3}, {2, 1}};
+    Matrix d = matrix_create(3, 2, arr);
     matrix_fill(&m, 20);
     matrix_fill(&b, 60);
     matrix_print(m);
@@ -32,10 +34,16 @@ void testing_matrix(){
     Matrix s = matrix_copy(m);
     matrix_sub(&s, b);
     matrix_print(s);
+    printf("----------------------------\n");
+    matrix_print(d);
+    Matrix t = matrix_create_empty(3, 4);
+    // matrix_mul(&m, t);
     // Free the memory that has the data and reset the matrix (rows = 0 & cols = 0)
     matrix_free(&m);
+    matrix_free(&d);
     matrix_free(&b);
     matrix_free(&s);
+    // matrix_free(&t);
 }
 
 void testing_sb(){

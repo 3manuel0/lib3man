@@ -175,26 +175,28 @@ typedef struct Matrix{
     size_t rows;
     size_t cols;
 }Matrix;
-// TODO : I NEED TO FINISH THIS MATRix functions
-Matrix matrix_create(size_t rows, size_t cols);
+// TODO : I NEED TO FINISH THESE MATRIX FUNCTIONS
+Matrix matrix_create_empty(size_t rows, size_t cols);// creates a matrix full of zeros
 
-int matrix_fill(Matrix *matrix, f64 value);
+Matrix matrix_create(size_t rows, size_t cols, f64 arr[rows][cols]);// creates a matrix from a 2d array
 
-void matrix_randomize(Matrix* matrix, f64 min, f64 max);
+int matrix_fill(Matrix *matrix, f64 value);// fills the matrix with the value given
 
-void matrix_add(Matrix *a, Matrix b);
+void matrix_randomize(Matrix* matrix, f64 min, f64 max);// fills the matrix with random numbers between min and max both includes
 
-void matrix_sub(Matrix *a, Matrix b);
+void matrix_add(Matrix *a, Matrix b);// addes matrix b to a
+
+void matrix_sub(Matrix *a, Matrix b);// subtructs matrix b from a 
 
 void matrix_mul(Matrix *a, Matrix b);
 
-void matrix_scale(Matrix *matrix, f64 k);
+void matrix_scale(Matrix *matrix, f64 k);// multiplies each element in the matrix with the value k
 
-Matrix matrix_copy(Matrix src);
+Matrix matrix_copy(Matrix src);// creates a copy of a matrix (must be freed)
 
-void matrix_map(Matrix *matrix, f64(*func)(f64));
+void matrix_map(Matrix *matrix, f64(*func)(f64));// does the function func for every elemnt of the matrix
 
-void matrix_print(Matrix matrix);
+void matrix_print(Matrix matrix);// prints the matrix
 
 void matrix_free(Matrix *matrix);
 

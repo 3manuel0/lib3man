@@ -1,13 +1,28 @@
 #include "../includes/lib3man.h"
+#include <assert.h>
+#include <stddef.h>
+#include <stdio.h>
 
-Matrix matrix_create(size_t rows, size_t cols){
+Matrix matrix_create_empty(size_t rows, size_t cols){
     assert(rows > 0 && cols > 0);
-    f64 *temp = malloc(rows * cols * sizeof(f64));
+    f64 *temp = calloc(rows * cols, sizeof(f64));
     if(temp == NULL){
-        fprintf(stderr, "MALLOC FAILED!\n");
+        fprintf(stderr, "ALLOCATION FAILED!\n");
         return (Matrix){.mtx = NULL, .cols = 0, .rows = 0};
     }
     return (Matrix){.mtx = temp, .cols = cols, .rows = rows};
+}
+
+Matrix matrix_create(size_t rows, size_t cols, f64 arr[rows][cols]){
+    assert(arr != NULL);
+    Matrix m = matrix_create_empty(rows, cols);
+    for(size_t i = 0; i < rows; i++){
+        for(size_t j = 0; j < cols; j++){
+            printf("%lf %zu\n", arr[i][j], (i * m.cols) + j);
+            m.mtx[(i * m.cols) + j] = arr[i][j];
+        }
+    }
+    return m;
 }
 
 int matrix_fill(Matrix *matrix, f64 value){
@@ -55,9 +70,16 @@ void matrix_sub(Matrix *a, Matrix b){
 void matrix_mul(Matrix *a, Matrix b){
     assert(a != NULL);
     assert(a->mtx != NULL && b.mtx != NULL);
-    if(a->cols != b.rows || (a->cols & b.cols) > 0 || (a->rows & b.rows) > 0 ){
+    if(a->cols != b.rows){
         printf("UNDIFINED BEHAVIOUR!\n");
         return;
+    }
+    // Matrix temp = matrix_create_empty(a->rows, b.cols);
+
+    for(size_t i = 0; i < a->cols*b.rows; i++){
+        for(size_t j = 0 + (i * a->rows); j < a->rows + i; j++){
+            printf("%lf\n", a->mtx[j]); 
+        }
     }
     // TODO : ADD LOGIC 
 }
@@ -71,8 +93,8 @@ void matrix_scale(Matrix *matrix, f64 k){
 
 Matrix matrix_copy(Matrix src){
     assert(src.mtx != NULL);
-    Matrix m = matrix_create(src.rows, src.cols);
-    memcpy(m.mtx, src.mtx, src.rows * src.rows * sizeof(f64));
+    Matrix m = matrix_create_empty(src.rows, src.cols);
+    memcpy(m.mtx, src.mtx, src.rows * src.cols * sizeof(f64));// fixed a bug that corrupts the heap
     return m;
 }
 
