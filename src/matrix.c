@@ -74,14 +74,40 @@ void matrix_mul(Matrix *a, Matrix b){
         printf("UNDIFINED BEHAVIOUR!\n");
         return;
     }
-    // Matrix temp = matrix_create_empty(a->rows, b.cols);
+    Matrix temp = matrix_create_empty(a->rows, b.cols);
 
-    for(size_t i = 0; i < a->cols*b.rows; i++){
-        for(size_t j = 0 + (i * a->rows); j < a->rows + i; j++){
-            printf("%lf\n", a->mtx[j]); 
+    for(size_t i = 0; i < a->rows; i++){
+        for(size_t j = 0; j < b.cols; j++){
+            f64 sum = 0;
+            for(size_t k = 0; k < a->cols; k++){
+                sum += a->mtx[(i * a->cols) + k] * b.mtx[(k * b.cols) + j];
+            }
+            temp.mtx[(i * b.cols) + j] = sum;
         }
     }
-    // TODO : ADD LOGIC 
+    Matrix to_free = *a;
+    *a = temp;
+    matrix_free(&to_free);
+}
+
+Matrix matrix_dot(Matrix a, Matrix b){
+    assert(a.mtx != NULL && b.mtx != NULL);
+    if(a.cols != b.rows){
+        printf("UNDIFINED BEHAVIOUR!\n");
+        return (Matrix) {.mtx = NULL, 0, 0};
+    }
+    Matrix temp = matrix_create_empty(a.rows, b.cols);
+
+    for(size_t i = 0; i < a.rows; i++){
+        for(size_t j = 0; j < b.cols; j++){
+            f64 sum = 0;
+            for(size_t k = 0; k < a.cols; k++){
+                sum += a.mtx[(i * a.cols) + k] * b.mtx[(k * b.cols) + j];
+            }
+            temp.mtx[(i * b.cols) + j] = sum;
+        }
+    }
+    return temp;
 }
 
 void matrix_scale(Matrix *matrix, f64 k){

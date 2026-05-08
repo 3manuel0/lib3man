@@ -188,7 +188,9 @@ void matrix_add(Matrix *a, Matrix b);// addes matrix b to a
 
 void matrix_sub(Matrix *a, Matrix b);// subtructs matrix b from a 
 
-void matrix_mul(Matrix *a, Matrix b);
+void matrix_mul(Matrix *a, Matrix b);// multiplaying a by b and storing the result in a
+
+Matrix matrix_dot(Matrix a, Matrix b);// returns a matrix which is the result of matrix a multiplied by matrix b
 
 void matrix_scale(Matrix *matrix, f64 k);// multiplies each element in the matrix with the value k
 
