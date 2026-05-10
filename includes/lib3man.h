@@ -198,6 +198,8 @@ Matrix matrix_copy(Matrix src);// creates a copy of a matrix (must be freed)
 
 void matrix_map(Matrix *matrix, f64(*func)(f64));// does the function func for every elemnt of the matrix
 
+Matrix matrix_transpose(Matrix matrix);
+
 void matrix_print(Matrix matrix);// prints the matrix
 
 void matrix_free(Matrix *matrix);

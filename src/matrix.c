@@ -131,6 +131,18 @@ void matrix_map(Matrix *matrix, f64(*func)(f64)){
         matrix->mtx[i] = func(matrix->mtx[i]);
 }
 
+
+Matrix matrix_transpose(Matrix matrix){
+    assert(matrix.mtx != NULL);
+    Matrix m = matrix_create_empty(matrix.cols, matrix.rows);
+    for(size_t i = 0; i < matrix.rows; i++){
+        for(size_t j = 0; j < matrix.cols; j++){
+            m.mtx[j * m.cols + i] = matrix.mtx[i * matrix.cols + j];
+        }
+    }
+    return m;
+}
+
 void matrix_print(Matrix matrix){
     for(size_t i = 0; i < matrix.rows; i++){
         printf("[");

@@ -38,8 +38,13 @@ void testing_matrix(){
     Matrix t = matrix_create_empty(3, 4);
     matrix_fill(&t, 2);
     matrix_print(m);
-    matrix_mul(&m, t);
-    matrix_print(m);
+    printf("----------------------------\n");
+    Matrix x = matrix_dot(m, t);
+    matrix_print(x);
+    printf("----------------------------\n");
+    Matrix mp = matrix_transpose(m);
+    matrix_print(mp);
+    printf("----------------------------\n");
     // Free the memory that has the data and reset the matrix (rows = 0 & cols = 0)
     matrix_free(&m);
     matrix_free(&d);
