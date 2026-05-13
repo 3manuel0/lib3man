@@ -167,6 +167,12 @@ f64 f64_random_range(f64 min, f64 max);// return float 64bit (double) based on a
 f32 f32_random_range(f32 min, f32 max);// return float 32bit (float) based on a range [min, max]
 
 u32 u32_random_range(u32 min, u32 max);// return unsigned integer 32bit based on a range [min, max]
+
+u16 u16_bswap(u16 x);//swaping bits (Endianess) 16bit
+
+u32 u32_bswap(u32 x);//swaping bits (Endianess) 32bit
+
+u64 u64_bswap(u64 x);//swaping bits (Endianess) 64bit
 // ###########################################################################################
 
 //############ Matrix #######################################################################
@@ -205,9 +211,4 @@ void matrix_print(Matrix matrix);// prints the matrix
 void matrix_free(Matrix *matrix);
 
 // ######################################################################################################################
-// ############ Bits Manipulation ##################################################################################################
-u16 u16_bswap(u16 x);
-u32 u32_bswap(u32 x);
-u64 u64_bswap(u64 x);
-// ############################################################################################################################
 #endif

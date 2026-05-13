@@ -45,7 +45,7 @@ void testing_matrix(){
     Matrix mp = matrix_transpose(m);
     matrix_print(mp);
     printf("----------------------------\n");
-    printf("%x\n", u32_bswap(0xFFABBCEF));
+    printf("%lx\n", u64_bswap(0xFFABBCEFFFABBCEFULL));
     // Free the memory that has the data and reset the matrix (rows = 0 & cols = 0)
     matrix_free(&m);
     matrix_free(&d);
