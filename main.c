@@ -1,6 +1,4 @@
 #include "includes/lib3man.h"
-#include <stddef.h>
-#include <stdio.h>
 
 void testing_sv_to_float64();
 void testing_sb();
@@ -8,7 +6,9 @@ void testing_matrix();
 
 int main(){
     // testing_sb();
-    testing_matrix();
+    Buffer b = buffer_read_file("main.c");
+    sv_print(*((string_view*)&b));
+    // testing_matrix();
 }
 
 void testing_matrix(){
@@ -67,6 +67,7 @@ void testing_sb(){
     sb_println(sb_fc);
     sb_free(&str2);
     sb_free(&sb_fc);
+    fclose(f);
 }
 
 void testing_sv_to_float64(){

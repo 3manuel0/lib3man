@@ -104,20 +104,32 @@ u64 u64_bswap(u64 x){
 }
 
 // TODO: TESTS FOR THIS FUNCTION
-Buffer buffer_read_file(const char * file){
+Buffer buffer_read_file(const char *file){
     FILE * f = fopen(file, "rb");
+    
     if(f == NULL){
         printf("FAILED TO OPEN THE FILE\n");
         return (Buffer){NULL, 0};
     }
+
     Buffer buff = {0};
     fseek(f, 0, SEEK_END);
     buff.size = ftell(f);
     fseek(f, 0, SEEK_SET);
-    buff.buf = malloc(buff.size); 
-    u32 ch = 0;
-    for(size_t i = 0;(ch = (u32)fgetc(f)) != EOF; i++){
-        buff.buf[i] = ch;
+    buff.buf = malloc(buff.size);
+
+    if(buff.buf == NULL){
+        printf("BUFFER ALLOCATION FAILED\n");
+        return (Buffer){NULL, 0};
+    } 
+
+    char ch = 0;
+    for(size_t i = 0;(ch = fgetc(f)) != EOF; i++){
+        buff.buf[i] = (u8)ch;
+        printf("i = %zu\n", i);
     }
+
+    printf("%zu\n", buff.size);
+    fclose(f);
     return buff;
 }

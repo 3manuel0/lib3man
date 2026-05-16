@@ -162,7 +162,7 @@ void sb_free(string_buffer *sb); // frees string-buffer (for the heap one not th
 #endif
 
 typedef struct{
-  u32 * buf;
+  u8 * buf;
   size_t size;
 } Buffer;
 
