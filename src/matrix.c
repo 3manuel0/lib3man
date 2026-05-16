@@ -131,7 +131,6 @@ void matrix_map(Matrix *matrix, f64(*func)(f64)){
         matrix->mtx[i] = func(matrix->mtx[i]);
 }
 
-
 Matrix matrix_transpose(Matrix matrix){
     assert(matrix.mtx != NULL);
     Matrix m = matrix_create_empty(matrix.cols, matrix.rows);

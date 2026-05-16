@@ -1,5 +1,6 @@
 #ifndef LIB_3MAN
 #define LIB_3MAN
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -160,6 +161,11 @@ void sb_free(string_buffer *sb); // frees string-buffer (for the heap one not th
   #include <sys/random.h>
 #endif
 
+typedef struct{
+  u32 * buf;
+  size_t size;
+} Buffer;
+
 u32 u32_entropy_random(void);//os based unsigned 32bit integer pseudo-random entropy generator
 
 f64 f64_random_range(f64 min, f64 max);// return float 64bit (double) based on a range [min, max]
@@ -173,6 +179,8 @@ u16 u16_bswap(u16 x);//swaping bits (Endianess) 16bit
 u32 u32_bswap(u32 x);//swaping bits (Endianess) 32bit
 
 u64 u64_bswap(u64 x);//swaping bits (Endianess) 64bit
+
+Buffer buffer_read_file(const char * file);
 // ###########################################################################################
 
 //############ Matrix #######################################################################
@@ -181,6 +189,7 @@ typedef struct Matrix{
     size_t rows;
     size_t cols;
 }Matrix;
+
 // TODO : I NEED TO FINISH THESE MATRIX FUNCTIONS
 Matrix matrix_create_empty(size_t rows, size_t cols);// creates a matrix full of zeros
 
@@ -204,11 +213,11 @@ Matrix matrix_copy(Matrix src);// creates a copy of a matrix (must be freed)
 
 void matrix_map(Matrix *matrix, f64(*func)(f64));// does the function func for every elemnt of the matrix
 
-Matrix matrix_transpose(Matrix matrix);
+Matrix matrix_transpose(Matrix matrix);// matrix transpose (fliping rows with columns) M[R x C] -> M[C x R]
 
 void matrix_print(Matrix matrix);// prints the matrix
 
-void matrix_free(Matrix *matrix);
+void matrix_free(Matrix *matrix);// free memory
 
 // ######################################################################################################################
 #endif

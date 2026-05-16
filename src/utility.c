@@ -1,4 +1,7 @@
 #include "../includes/lib3man.h"
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 u32 u32_entropy_random(void) {
     u32 value = 0;
@@ -98,4 +101,23 @@ u64 u64_bswap(u64 x){
                 ((x >> 40) & 0x000000000000ff00ULL) |
                 ((x >> 56) & 0x00000000000000ffULL);
     #endif
+}
+
+// TODO: TESTS FOR THIS FUNCTION
+Buffer buffer_read_file(const char * file){
+    FILE * f = fopen(file, "rb");
+    if(f == NULL){
+        printf("FAILED TO OPEN THE FILE\n");
+        return (Buffer){NULL, 0};
+    }
+    Buffer buff = {0};
+    fseek(f, 0, SEEK_END);
+    buff.size = ftell(f);
+    fseek(f, 0, SEEK_SET);
+    buff.buf = malloc(buff.size); 
+    u32 ch = 0;
+    for(size_t i = 0;(ch = (u32)fgetc(f)) != EOF; i++){
+        buff.buf[i] = ch;
+    }
+    return buff;
 }
