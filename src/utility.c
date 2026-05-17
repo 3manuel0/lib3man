@@ -1,7 +1,7 @@
 #include "../includes/lib3man.h"
+#include <assert.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 u32 u32_entropy_random(void) {
     u32 value = 0;
@@ -105,31 +105,60 @@ u64 u64_bswap(u64 x){
 
 // TODO: TESTS FOR THIS FUNCTION
 Buffer buffer_read_file(const char *file){
+    assert(file != NULL);
+
     FILE * f = fopen(file, "rb");
     
     if(f == NULL){
-        printf("FAILED TO OPEN THE FILE\n");
+        printf("FAILED TO OPEN THE FILE : %s\n", file);
         return (Buffer){NULL, 0};
     }
 
     Buffer buff = {0};
     fseek(f, 0, SEEK_END);
     buff.size = ftell(f);
+
+    if(buff.size == 0){
+        printf("FILE IS EMPTY : %s\n", file);
+        return (Buffer){NULL, 0};
+    } 
+
     fseek(f, 0, SEEK_SET);
     buff.buf = malloc(buff.size);
 
     if(buff.buf == NULL){
-        printf("BUFFER ALLOCATION FAILED\n");
+        printf("BUFFER ALLOCATION FAILED WHEN READING : %s\n", file);
         return (Buffer){NULL, 0};
     } 
 
-    char ch = 0;
-    for(size_t i = 0;(ch = fgetc(f)) != EOF; i++){
-        buff.buf[i] = (u8)ch;
-        printf("i = %zu\n", i);
+    size_t len = fread(buff.buf, sizeof(u8), buff.size, f);
+    if(len != buff.size){
+        printf("FAILED TO READ THE FILE : %s\n", file);
+        free(buff.buf);
+        return (Buffer){NULL, 0};
     }
 
     printf("%zu\n", buff.size);
     fclose(f);
     return buff;
+}
+
+
+ssize_t buffer_write_file(Buffer buffer, const char * file_name){
+    assert(buffer.buf != NULL);
+    FILE* f = fopen(file_name, "wb");
+
+    if(f == NULL){
+        printf("FAILED TO OPEN THE FILE : %s\n", file_name);
+        return -1;
+    }
+
+    size_t len = fwrite(buffer.buf, sizeof(u8), buffer.size, f);
+
+    if(len != buffer.size){
+        printf("FAILED TO WRITE THE FILE : %s\n", file_name);
+        return -1;
+    }
+
+    return len;
 }

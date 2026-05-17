@@ -8,7 +8,11 @@ int main(){
     // testing_sb();
     Buffer b = buffer_read_file("main.c");
     sv_print(*((string_view*)&b));
+    if(buffer_write_file(b, "test.txt") < 0){
+        printf("file writing failed\n");
+    }
     // testing_matrix();
+    return 0;
 }
 
 void testing_matrix(){
