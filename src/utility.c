@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 u32 u32_entropy_random(void) {
     u32 value = 0;
@@ -161,4 +162,12 @@ ssize_t buffer_write_file(Buffer buffer, const char * file_name){
     }
 
     return len;
+}
+
+void buffer_free(Buffer *buffer){
+    assert(buffer != NULL);
+    assert(buffer->buf != NULL);
+    free(buffer->buf);
+    buffer->buf = NULL;
+    buffer->size = 0;
 }

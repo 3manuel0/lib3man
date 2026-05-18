@@ -183,6 +183,8 @@ u64 u64_bswap(u64 x);//swaping bits (Endianess) 64bit
 Buffer buffer_read_file(const char * file);
 
 ssize_t buffer_write_file(Buffer buffer, const char * file_name);
+
+void buffer_free(Buffer *buffer);
 // ###########################################################################################
 
 //############ Matrix #######################################################################
