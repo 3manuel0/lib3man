@@ -3,6 +3,7 @@
 void testing_sv_to_float64();
 void testing_sb();
 void testing_matrix();
+void test_ArenaList();
 
 int main(){
     // testing_sb();
@@ -12,6 +13,7 @@ int main(){
         printf("file writing failed\n");
     }
     // testing_matrix();
+    test_ArenaList();
     return 0;
 }
 
@@ -97,4 +99,15 @@ void testing_sv_to_float64(){
         if(s)
             printf("the output = %lf\n", t);
     }
+}
+
+void test_ArenaList(){
+    ArenaList * a = create_ArenaList(KiB(13));
+    printf("capacity :%zu adress :%p cur_size: %zu\n", a->arena.capacity, a->arena.address, a->arena.cur_size);
+    for(int i = 0; i < 200; i++){
+        int * tmp = arenaList_Alloc(&a, 55);
+        printf("tmp_address = %zu\n", (u64)tmp);
+    }
+    arenaList_free(a);
+    return;
 }

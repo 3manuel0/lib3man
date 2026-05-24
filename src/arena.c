@@ -1,5 +1,19 @@
 #include "../includes/lib3man.h"
 
+#if UINTPTR_MAX == 0xFFFFFFFFFFFFFFFFULL
+    //alignment for 64bit
+    #define ALIGNMENT 16
+#elif UINTPTR_MAX == 0xFFFFFFFF
+    //alignment for 32bit
+    #define ALIGNMENT 8
+#elif UINTPTR_MAX == 0xFFFF
+    //alignment for 16bit
+    #define ALIGNMENT 2
+#else // to be safe a fallback
+    #define ALIGNMENT 8
+#endif
+
+
 Arena create_Arena(size_t arena_size){
     Arena arena = {0};
     arena.capacity = arena_size;
@@ -18,10 +32,11 @@ void *arena_Alloc(Arena * arena, size_t size){
     assert(arena->capacity >= size);
     void * ptr = NULL;
     if(arena->memory == NULL) return NULL;
-    if(arena->cur_size + size <= arena->capacity){
+    size_t aligned_size = ((size + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1));
+    if(arena->cur_size + aligned_size <= arena->capacity){
         ptr = arena->address;
-        arena->address =  (char *)arena->address + size;
-        arena->cur_size += size;
+        arena->address =  (char *)arena->address + aligned_size;
+        arena->cur_size += aligned_size;
     }else{
         fprintf(stderr, "Error, Arena is Full\n");
         // I will add more options later
