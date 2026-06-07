@@ -1,8 +1,4 @@
 #include "../includes/lib3man.h"
-#include <assert.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
 
 // Important replaced wirte with fwrite :
 // 1- for buffering meaning printing is faster

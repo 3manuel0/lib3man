@@ -1,8 +1,5 @@
 #include "../includes/lib3man.h"
-#include <assert.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
+
 
 u32 u32_entropy_random(void) {
     u32 value = 0;

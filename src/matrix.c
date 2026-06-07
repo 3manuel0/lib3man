@@ -1,7 +1,4 @@
 #include "../includes/lib3man.h"
-#include <assert.h>
-#include <stddef.h>
-#include <stdio.h>
 
 Matrix matrix_create_empty(size_t rows, size_t cols){
     assert(rows > 0 && cols > 0);

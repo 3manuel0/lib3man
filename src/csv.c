@@ -32,7 +32,7 @@ CSV *load_csv(char *file_name){
     CSV * csv = create_csv();
 
     if(csv == NULL){
-        fprintf(stderr, "Error, csv Object Allocation Failed!\n");
+        fprintf(stderr, "Error, CSV Object Creation/Allocation Failed!\n");
         return NULL;
     }
 
@@ -53,11 +53,13 @@ CSV *load_csv(char *file_name){
     // rows top -> bottom
     csv_to_memory(csv_mem, csv_f, temp_file_size, &csv->numcols, &csv->numrows);
     if(csv->numcols == 0 || csv->numrows == 0){
-        perror("Error, csv Parcing Failed!");
+        printf("Error, csv Parcing Failed!\n");
+        free(csv_mem);
         return NULL;
     }
     
     if(csv_parse_head(csv, csv_mem)){
+        free(csv_mem);
         return  NULL;
     }
 
@@ -70,6 +72,7 @@ CSV *load_csv(char *file_name){
     csv_parse(csv, csv_mem);
     // printf("string: ");
     csv_parse_with_types(csv);
+    free(csv_mem);
     // sv_print((string_view *)csv->data[0]);
     return csv;
 }
@@ -162,7 +165,7 @@ u8 *csv_parse_row(ArenaList *arena, string_view *csv_row, csv_type *csv_types, u
     size_t count = 0;
     size_t current_column = 0;
     u8 is_quotes = false; // checking if test in quotations to not split using the ,
-    int i = 0;
+    size_t i = 0;
     for(; mem[i] != '\n' && mem[i] != 0; i++){
         if(mem[i] == '"' && is_quotes){
             is_quotes = false;
@@ -518,9 +521,9 @@ string_view csv_column_name(const CSV *csv, size_t column){
 // STATISTIC FUNCTIONS 
 int64_t csv_column_sum_int(const CSV* csv, size_t col_index){
     assert(col_index < csv->numcols);
-    if(csv->types[col_index] == int64_){
+    if(csv->types[col_index] == float64_){
         i64 temp = 0;
-        i64 ** col = (i64**)csv->data;
+        f64 ** col = (f64**)csv->data;
         for(size_t i = 0; i < csv->numrows; i++){
             temp+= col[i][col_index];
         }
@@ -528,7 +531,7 @@ int64_t csv_column_sum_int(const CSV* csv, size_t col_index){
     }
     else if(csv->types[col_index] == int64_){
         i64 temp = 0;
-        f64 ** col = (f64**)csv->data;
+        i64 ** col = (i64**)csv->data;
         for(size_t i = 0; i < csv->numrows; i++){
             temp+= col[i][col_index];
         }
@@ -601,7 +604,7 @@ f64 csv_column_max(const CSV* csv, size_t col_index){
         }
         return max;
     }
-    else if(csv->types[col_index] == float64_){
+    else if(csv->types[col_index] == int64_){
         i64 **col = ((i64**)csv->data);
         f64 max = (f64)col[0][col_index];
         for(size_t i = 1; i < csv->numrows; i++){

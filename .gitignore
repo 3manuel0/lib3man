@@ -3,3 +3,4 @@ main
 pr3intf
 *.o
 *.csv
+*.json
