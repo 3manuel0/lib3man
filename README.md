@@ -10,6 +10,8 @@ Lib3man is a small C library I'm building for learning purposes and to use in my
   ![string_view.svg](images/string_view.svg)
 - #### `Dynamically allocated strings (string buffer)` :
   ![string_view.svg](images/string_buffer.svg)
+- #### `Small CSV Parser (C3SV, in progress..)`
+  C3SV started as [this](https://github.com/3manuel0/C3SV) since it uses lib3man and also I do use it for ML, I thought it's better to put it inside lib3man.
 - #### `Matrix (Math Matrix)`
 - #### `Utilities (os based pseudo-random)`
 
@@ -27,6 +29,7 @@ Lib3man is a small C library I'm building for learning purposes and to use in my
 │
 └── src
     ├── arena.c     # Memory Arenas and Arena-list
+    ├── csv.c       # CSV parser (in progress)
     ├── matrix.c    # Matrix
     ├── string.c    # String view, String buffer
     └── utility.c   # OS based pseudo-random

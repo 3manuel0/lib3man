@@ -6,8 +6,8 @@ CFLAGS  = /nologo /W4 /Iincludes /c
 
 LDFLAGS = /nologo /MACHINE:X64
 
-SRC = src\arena.c src\string.c src/utility.c src/matrix.c
-OBJ = src\arena.obj src\string.obj src/utility.obj src/matrix.obj
+SRC = src\arena.c src\string.c src/utility.c src/matrix.c src/csv.c
+OBJ = src\arena.obj src\string.obj src/utility.obj src/matrix.obj src/csv.obj
 
 MY_LIB = lib\lib3man.lib
 
@@ -27,6 +27,9 @@ src\utility.obj: src\utility.c
 
 src\matrix.obj: src\matrix.c
 	$(CC) $(CFLAGS) /Fo$@ src\matrix.c
+
+src\csv.obj: src\csv.c
+	$(CC) $(CFLAGS) /Fo$@ src\csv.c
 
 main.obj: main.c
 	$(CC) $(CFLAGS) /Fo$@ main.c
