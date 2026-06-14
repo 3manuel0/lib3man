@@ -104,21 +104,20 @@ u64 u64_bswap(u64 x){
 // TODO: TESTS FOR THIS FUNCTION
 Buffer buffer_read_file(const char *file){
     assert(file != NULL);
-
+    Buffer buff = {0};
     FILE * f = fopen(file, "rb");
     
     if(f == NULL){
         printf("FAILED TO OPEN THE FILE : %s\n", file);
-        return (Buffer){NULL, 0};
+        return buff;
     }
 
-    Buffer buff = {0};
     fseek(f, 0, SEEK_END);
     buff.size = ftell(f);
 
     if(buff.size == 0){
         printf("FILE IS EMPTY : %s\n", file);
-        return (Buffer){NULL, 0};
+        return buff;
     } 
 
     fseek(f, 0, SEEK_SET);
@@ -126,16 +125,16 @@ Buffer buffer_read_file(const char *file){
 
     if(buff.buf == NULL){
         printf("BUFFER ALLOCATION FAILED WHEN READING : %s\n", file);
-        return (Buffer){NULL, 0};
+        return buff;
     } 
 
     size_t len = fread(buff.buf, sizeof(u8), buff.size, f);
     if(len != buff.size){
         printf("FAILED TO READ THE FILE : %s\n", file);
         free(buff.buf);
-        return (Buffer){NULL, 0};
+        return (Buffer){NULL, 0, 0};
     }
-
+    buff.current_ptr = 0;
     printf("%zu\n", buff.size);
     fclose(f);
     return buff;
