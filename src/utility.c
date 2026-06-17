@@ -1,4 +1,8 @@
 #include "../includes/lib3man.h"
+#include <assert.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <unistd.h>
 
 
 u32 u32_entropy_random(void) {
@@ -134,12 +138,27 @@ Buffer buffer_read_file(const char *file){
         free(buff.buf);
         return (Buffer){NULL, 0, 0};
     }
-    buff.current_ptr = 0;
+    buff.offset = 0;
     printf("%zu\n", buff.size);
     fclose(f);
     return buff;
 }
 
+void * buffer_get_next_sz(Buffer buffer, size_t size){
+    assert(buffer.buf != NULL && buffer.size > 0);
+
+    assert(buffer.offset + size < buffer.size 
+        && "Out of Buffer's range.\n");
+    
+    void * ptr = buffer.buf + buffer.offset;
+    buffer.offset += size;
+
+    return ptr;
+}
+
+void buffer_reset(Buffer * buffer){
+    buffer->offset = 0;
+}
 
 ssize_t buffer_write_file(Buffer buffer, const char * file_name){
     assert(buffer.buf != NULL);

@@ -164,7 +164,7 @@ void sb_free(string_buffer *sb); // frees string-buffer (for the heap one not th
 typedef struct{
   u8 * buf;
   size_t size;
-  size_t current_ptr;
+  size_t offset;
 } Buffer;
 
 u32 u32_entropy_random(void);//os based unsigned 32bit integer pseudo-random entropy generator
@@ -182,6 +182,10 @@ u32 u32_bswap(u32 x);//swaping bits (Endianess) 32bit
 u64 u64_bswap(u64 x);//swaping bits (Endianess) 64bit
 
 Buffer buffer_read_file(const char * file);
+
+void * buffer_get_next_sz(Buffer buffer, size_t size);
+
+void buffer_reset(Buffer * buffer);
 
 ssize_t buffer_write_file(Buffer buffer, const char * file_name);
 
