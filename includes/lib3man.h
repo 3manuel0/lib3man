@@ -183,7 +183,7 @@ u64 u64_bswap(u64 x);//swaping bits (Endianess) 64bit
 
 Buffer buffer_read_file(const char * file);
 
-void * buffer_get_next_sz(Buffer buffer, size_t size);
+void * buffer_get_next_sz(Buffer * buffer, size_t size);
 
 void buffer_reset(Buffer * buffer);
 

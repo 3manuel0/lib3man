@@ -144,14 +144,14 @@ Buffer buffer_read_file(const char *file){
     return buff;
 }
 
-void * buffer_get_next_sz(Buffer buffer, size_t size){
-    assert(buffer.buf != NULL && buffer.size > 0);
+void * buffer_get_next_sz(Buffer * buffer, size_t size){
+    assert(buffer->buf != NULL && buffer->size > 0);
 
-    assert(buffer.offset + size < buffer.size 
+    assert(buffer->offset + size < buffer->size 
         && "Out of Buffer's range.\n");
     
-    void * ptr = buffer.buf + buffer.offset;
-    buffer.offset += size;
+    void * ptr = buffer->buf + buffer->offset;
+    buffer->offset += size;
 
     return ptr;
 }
