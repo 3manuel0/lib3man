@@ -181,15 +181,15 @@ u32 u32_bswap(u32 x);//swaping bits (Endianess) 32bit
 
 u64 u64_bswap(u64 x);//swaping bits (Endianess) 64bit
 
-Buffer buffer_read_file(const char * file);
+Buffer buffer_read_file(const char * file);// reads an entier file into a Buffer
 
-void * buffer_get_next_sz(Buffer * buffer, size_t size);
+void * buffer_get_next_sz(Buffer * buffer, size_t size);// it uses a cursor like into that buffer and moves it by the size, it returns the ptr before that.
 
-void buffer_reset(Buffer * buffer);
+void buffer_reset(Buffer * buffer);// reset the cursor of the Buffer or the offset.
 
-ssize_t buffer_write_file(Buffer buffer, const char * file_name);
+ssize_t buffer_write_file(Buffer buffer, const char * file_name);// write the entier Buffer into a file
 
-void buffer_free(Buffer *buffer);
+void buffer_free(Buffer *buffer);// frees the Buffer's memory and rests it.
 // ###########################################################################################
 
 // ########### C3SV ##########################################################################

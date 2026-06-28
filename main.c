@@ -8,14 +8,14 @@ void testing_csv();
 
 int main(){
     // testing_sb();
-    // Buffer b = buffer_read_file("main.c");
-    // sv_print(*((string_view*)&b));
-    // if(buffer_write_file(b, "test.txt") < 0){
-    //     printf("file writing failed\n");
-    // }
-    // // testing_matrix();
+    Buffer b = buffer_read_file("main.c");
+    sv_print(*((string_view*)&b));
+    if(buffer_write_file(b, "test.txt") < 0){
+        printf("file writing failed\n");
+    }
+    // testing_matrix();
     // test_ArenaList();
-    testing_csv();
+    // testing_csv();
     return 0;
 }
 
