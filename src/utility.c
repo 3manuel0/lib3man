@@ -1,8 +1,4 @@
 #include "../includes/lib3man.h"
-#include <assert.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <unistd.h>
 
 
 u32 u32_entropy_random(void) {
@@ -119,6 +115,13 @@ Buffer buffer_read_file(const char *file){
     fseek(f, 0, SEEK_END);
     buff.size = ftell(f);
 
+    // handeling ftell returns an error
+    if(buff.size == ULONG_MAX){
+        printf("ftell ERORRED! IN FILE: %s\n", file);
+        buff.size = 0;
+        return buff;
+    }
+
     if(buff.size == 0){
         printf("FILE IS EMPTY : %s\n", file);
         return buff;
@@ -147,8 +150,8 @@ Buffer buffer_read_file(const char *file){
 void * buffer_get_next_sz(Buffer * buffer, size_t size){
     assert(buffer->buf != NULL && buffer->size > 0);
 
-    assert(buffer->offset + size < buffer->size 
-        && "Out of Buffer's range.\n");
+    assert(buffer->offset + size <= buffer->size 
+        && "Out of Buffer's range.\n"); // fixed bug we don't read the last byte
     
     void * ptr = buffer->buf + buffer->offset;
     buffer->offset += size;
@@ -173,9 +176,11 @@ ssize_t buffer_write_file(Buffer buffer, const char * file_name){
 
     if(len != buffer.size){
         printf("FAILED TO WRITE THE FILE : %s\n", file_name);
+        fclose(f);
         return -1;
     }
-
+    
+    fclose(f);
     return len;
 }
 

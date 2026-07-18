@@ -33,6 +33,7 @@ CSV *load_csv(char *file_name){
 
     if(csv == NULL){
         fprintf(stderr, "Error, CSV Object Creation/Allocation Failed!\n");
+        csv_free(csv);
         return NULL;
     }
 
@@ -43,6 +44,7 @@ CSV *load_csv(char *file_name){
 
     if(csv_mem == NULL){
         fprintf(stderr, "Error, Memory Allocation Failed");
+        csv_free(csv);
         return NULL;
     }
 
@@ -54,11 +56,13 @@ CSV *load_csv(char *file_name){
     csv_to_memory(csv_mem, csv_f, temp_file_size, &csv->numcols, &csv->numrows);
     if(csv->numcols == 0 || csv->numrows == 0){
         printf("Error, csv Parcing Failed!\n");
+        csv_free(csv);
         free(csv_mem);
         return NULL;
     }
     
     if(csv_parse_head(csv, csv_mem)){
+        csv_free(csv);
         free(csv_mem);
         return  NULL;
     }
@@ -225,7 +229,7 @@ int csv_parse(CSV *csv, u8 *mem){
     while(*(mem++) != '\n');
 
     // adding types for now we parse all the rows as strings
-    csv->types = arenaList_Alloc(&csv->gl_arena, sizeof(csv_type *) * csv->numcols);
+    csv->types = arenaList_Alloc(&csv->gl_arena, sizeof(csv_type) * csv->numcols);// fixed a bug allocating sizeof(csv_type *) instead of sizeof(csv_type) 
     // for(size_t i = 0; i < csv->numrows; i++){
     //     csv->types[i] = string_;
     // }

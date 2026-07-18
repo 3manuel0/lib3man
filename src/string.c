@@ -31,7 +31,7 @@ size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NU
     
     size_t count = 0;
     if(sv_arr == NULL || sv_arr_len == 0){
-        for(size_t i = 0; i < sb->cap; i++){
+        for(size_t i = 0; i < sb->len; i++){ // it had a bug needed the len not the capacity
             if(sb->str[i] == delimiter) count++;
         }
         count++;
@@ -40,7 +40,7 @@ size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NU
         char * tmp = sb->str;
         size_t total = 0;
         for(size_t i = 0; i < sv_arr_len; i++){
-            while(tmp[len] != delimiter || total < sb->len){
+            while(tmp[len] != delimiter && total < sb->len){ // stupid logic bug by me was || instead of &&
                 len++;
                 total++;
             }
@@ -50,7 +50,7 @@ size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NU
             len = 0;
         }
         if(total < sb->len){
-            for(size_t i = 0; i < sb->cap; i++){
+            for(size_t i = 0; i < sb->len; i++){ // had the same bug as above
                 if(sb->str[i] == delimiter) count++;
             }
             count++;
@@ -74,7 +74,7 @@ int sv_to_int64(const sv *sv, i64 *out){
     assert(sv->str != NULL && sv->len > 0);
 
     if(sv->len > 20) return false;
-    if(sv->len == 20 && (sv->str[0] != '-' || sv->str[0] != '+'))
+    if(sv->len == 20 && (sv->str[0] != '-' && sv->str[0] != '+'))// fixed a logical bug
         return false;
     i64 temp = 0;
     u32 i = 0;
@@ -108,7 +108,7 @@ int sv_to_int32(const sv *sv, i32 *out){
     assert(sv->str != NULL && sv->len > 0);
 
     if(sv->len > 11) return false;
-    if(sv->len == 11 && (sv->str[0] != '-' || sv->str[0] != '+'))
+    if(sv->len == 11 && (sv->str[0] != '-' && sv->str[0] != '+'))// logical bug
         return false;
     
     i32 temp = 0;
@@ -269,6 +269,7 @@ sb create_sb_empty(size_t cap){
 sb sb_from_cstr(const char *str){
     assert(str != NULL);
     size_t len = strlen(str);
+    assert(len > 0);
     size_t cap = len * 2;
     char *temp = malloc(cap);
 

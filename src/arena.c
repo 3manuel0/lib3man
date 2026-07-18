@@ -126,7 +126,7 @@ void *arenaList_Realloc(ArenaList **arenaList, void *p, size_t oldsz , size_t ne
         fprintf(stderr, "No size change no Reallocation\n");
         return NULL;
     } 
-
+    // BUG:there is a bug here p +oldsz alignment causes this comparison to not work proprly
     if((char *)p + oldsz == (*arenaList)->arena.address && \
         (*arenaList)->arena.cur_size + diff <= (*arenaList)->arena.capacity)
     {
