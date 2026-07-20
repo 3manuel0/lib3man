@@ -1,4 +1,5 @@
 #include "../includes/lib3man.h"
+#include <stdio.h>
 
 // TODO: ADD OTHER SUPPORT FOR OTHER TYPES 
 
@@ -33,7 +34,7 @@ CSV *load_csv(char *file_name){
 
     if(csv == NULL){
         fprintf(stderr, "Error, CSV Object Creation/Allocation Failed!\n");
-        csv_free(csv);
+        // csv_free(csv);
         return NULL;
     }
 
@@ -44,7 +45,7 @@ CSV *load_csv(char *file_name){
 
     if(csv_mem == NULL){
         fprintf(stderr, "Error, Memory Allocation Failed");
-        csv_free(csv);
+        // csv_free(csv);
         return NULL;
     }
 
@@ -56,13 +57,13 @@ CSV *load_csv(char *file_name){
     csv_to_memory(csv_mem, csv_f, temp_file_size, &csv->numcols, &csv->numrows);
     if(csv->numcols == 0 || csv->numrows == 0){
         printf("Error, csv Parcing Failed!\n");
-        csv_free(csv);
+        // csv_free(csv);
         free(csv_mem);
         return NULL;
     }
     
     if(csv_parse_head(csv, csv_mem)){
-        csv_free(csv);
+        // csv_free(csv);
         free(csv_mem);
         return  NULL;
     }
@@ -75,9 +76,11 @@ CSV *load_csv(char *file_name){
     // printf("%zu\n", csv->numrow);
     csv_parse(csv, csv_mem);
     // printf("string: ");
-    csv_parse_with_types(csv);
+    // csv_parse_with_types(csv);
     free(csv_mem);
-    // sv_print((string_view *)csv->data[0]);
+    string_view t = ((string_view **)csv->data)[0][3];
+    printf("len = %zu\n", t.len);
+    sv_print(t);
     return csv;
 }
 
@@ -247,9 +250,14 @@ int csv_parse(CSV *csv, u8 *mem){
 void csv_print_row(const void *row, csv_type *row_types, size_t numcolumns){
     // fwrite(1, "[ ", 2);
     fwrite("[ ", 1, 2, stdout);
+    // printf(" row_types %zu\n", (u64)row_types);
+    // printf("%zu %zu %zu %zu %zu\n", (i64)row_types[0], (i64)row_types[1], (i64)row_types[2], (i64)row_types[3], (i64)row_types[4]);
     for(size_t i = 0; i < numcolumns; i++){
         switch ((i64)row_types[i]) {
             case string_:
+                // string_view test = ((string_view*)row)[i];
+                // printf(" length %zu\n", test.len);
+                // printf(" str %p\n", test.str);
                 sv_print(((string_view*)row)[i]);
                 break;
             case int64_: {
