@@ -76,11 +76,11 @@ CSV *load_csv(char *file_name){
     // printf("%zu\n", csv->numrow);
     csv_parse(csv, csv_mem);
     // printf("string: ");
-    // csv_parse_with_types(csv);
+    csv_parse_with_types(csv);
     free(csv_mem);
-    string_view t = ((string_view **)csv->data)[0][3];
-    printf("len = %zu\n", t.len);
-    sv_print(t);
+    // string_view t = ((string_view **)csv->data)[0][3];
+    // printf("len = %zu\n", t.len);
+    // sv_print(t);
     return csv;
 }
 
@@ -394,12 +394,18 @@ void csv_parse_with_types(CSV *csv){
                     // sv_println(&sv);
                     break;
                 case int64_: {
-                    sv_to_int64(&sv, &((i64**)csv->data)[i][j]);
-                    // printf("integer : %ld\n", ((i64**)csv->data)[i][j]);
+                    // sv_println(sv);
+                    // // printf("integer : %lx %zu\n", ((i64**)csv->data)[i][j], sv.len);
+                    sv_to_int64(&sv, &(((i64**)csv->data)[i][j]));
+                    // // sv_to_int64(&sv, (i64 *)&(((string_view **)csv->data)[i][j]));
+                    // i64 test = 0;
+                    // sv_to_int64(&sv, &test);
+                    // printf("integer : %ld %zu %ld\n", ((i64**)csv->data)[i][j], *(i64 *)&(((string_view **)csv->data)[i][j]), test);
                     break;
                 }
                 case float64_ : {
-                    sv_to_float64(&sv, &((f64**)csv->data)[i][j]);
+                    sv_to_float64(&sv, &(((f64**)csv->data)[i][j]));
+                    // sv_to_float64(&sv, (f64 *)&sv);
                     // printf("float : %lf\n", ((f64**)csv->data)[i][j]);
                     break;
                 }

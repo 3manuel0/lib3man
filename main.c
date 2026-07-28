@@ -1,4 +1,6 @@
 #include "includes/lib3man.h"
+#include <stddef.h>
+#include <stdio.h>
 
 void testing_sv_to_float64();
 void testing_sb();
@@ -116,7 +118,7 @@ void test_ArenaList(){
 }
 
 void testing_csv(){
-    CSV *csv = load_csv("test2.csv");
+    CSV *csv = load_csv("test1.csv");
     // CSV *csv = load_csv("test1.csv");
     if(csv == NULL){
         printf("failed to read csv\n");
@@ -128,7 +130,7 @@ void testing_csv(){
     for(size_t i = 0; i < csv->numrows; i++){
         csv_print_row(csv->data[i], csv->types,csv->numcols);
     }
-    
+    printf("% ld", ((i64**)csv->data)[0][2]);
     // printf("numcols: %zu  %zu\n", csv->numcols, csv->numrows);
     // string_view to_look_for = sv_from_lit("Last Name");
     // csv_print_column_from_string(csv , to_look_for);
@@ -140,8 +142,8 @@ void testing_csv(){
     // ((f64**)csv->data)[0][2] = 22.0;
     // TODO: add typing to writing csv
     // writing the file
-    // csv_write_file("out.csv", csv);
-    // csv_write_json(csv, "test.json");
+    csv_write_file("out.csv", csv);
+    csv_write_json(csv, "test.json");
     // // writing all the types
     // csv_print_types(csv);
     // printf("i64 : %ld\n", csv_get_int_by_name(csv, 0, sv_from_lit("x")));
