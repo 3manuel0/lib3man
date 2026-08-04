@@ -118,13 +118,13 @@ void test_ArenaList(){
 }
 
 void testing_csv(){
-    CSV *csv = load_csv("test1.csv");
-    // CSV *csv = load_csv("test1.csv");
+    CSV *csv = load_csv("test2.csv");
+    // CSV *csv = load_csv("big_1000_rows.csv");
     if(csv == NULL){
         printf("failed to read csv\n");
         return;
     }
-
+    csv_print_types(csv);
     csv_print_head(csv);
     // csv_print_row(csv->data[5], csv->numcols);
     for(size_t i = 0; i < csv->numrows; i++){

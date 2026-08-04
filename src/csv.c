@@ -112,6 +112,7 @@ void csv_to_memory(u8 *mem, FILE *file, size_t size, size_t *numcolumn, size_t *
     u8 is_next_line = 0;
     for(size_t i = 0; i < size; i++){
         u8 ch = fgetc(file);
+        // printf("%c %d\n", ch, ch);
         if(ch == '\r'){
             ch = fgetc(file);
             size--;
@@ -212,6 +213,8 @@ u8 *csv_parse_row(ArenaList *arena, string_view *csv_row, csv_type *csv_types, u
 }
 
 csv_type get_type(string_view *sv, csv_type t){
+    // return string_;  
+
     if(t == float64_){
         if(sv_to_float64(sv, NULL)){
             return float64_;
@@ -261,11 +264,13 @@ void csv_print_row(const void *row, csv_type *row_types, size_t numcolumns){
                 sv_print(((string_view*)row)[i]);
                 break;
             case int64_: {
-                printf("%ld", ((i64*)row)[i]);
+                // printf("%ld", ((i64*)row)[i]);
+                printf("%ld", *((i64 *)&((string_view*)row)[i]));
                 break;
             }
             case float64_ : {
-                printf("%g", ((f64*)row)[i]);
+                // printf("%g", ((f64*)row)[i]);
+                printf("%g", *((f64 *)&((string_view*)row)[i]));
                 break;
             }
             default:
@@ -388,15 +393,25 @@ void csv_parse_with_types(CSV *csv){
     for(size_t i = 0; i < csv->numrows; i++){
         for(size_t j = 0; j < csv->numcols; j++){
             string_view sv = ((string_view **)csv->data)[i][j];
+            // void * data = csv->data[i];
+            // printf("str_ | len : %zu | ptr = %p\n", ((string_view **)csv->data)[i][j].len, &((string_view **)csv->data)[i][j]);
+            // sv_print(sv);
+            // printf(" string_view | len : %zu | ptr = %p | ((i64*)data + j) = %p  %zu\n", sv.len, (string_view *)&(((i64**)csv->data)[i][j]), ((i64*)data + j), sizeof(string_view));
             switch ((i64)csv->types[j]) {
                 case string_:
                     // printf("string : ");
                     // sv_println(&sv);
+                    // printf("str_ | len : %zu | ptr = %p\n", ((string_view **)csv->data)[i][j].len, &((string_view **)csv->data)[i][j]);
                     break;
                 case int64_: {
                     // sv_println(sv);
                     // // printf("integer : %lx %zu\n", ((i64**)csv->data)[i][j], sv.len);
-                    sv_to_int64(&sv, &(((i64**)csv->data)[i][j]));
+                    // sv_to_int64(&sv, &(((i64**)csv->data)[i][j]));
+                    sv_to_int64(&sv, (i64 *)&((string_view **)csv->data)[i][j]); 
+                    // printf("int64_ | len : %zu | ptr = %p | ((i64*)data + j) = %p  %zu\n", sv  .len, (string_view *)&(((i64**)csv->data)[i][j]), ((i64*)data + j), sizeof(string_view));
+                    // sv_println((((string_view**)csv->data)[i][j]));
+                    
+                    // ((i64**)csv->data)[i][j] = 0;
                     // // sv_to_int64(&sv, (i64 *)&(((string_view **)csv->data)[i][j]));
                     // i64 test = 0;
                     // sv_to_int64(&sv, &test);
@@ -404,7 +419,9 @@ void csv_parse_with_types(CSV *csv){
                     break;
                 }
                 case float64_ : {
-                    sv_to_float64(&sv, &(((f64**)csv->data)[i][j]));
+                    printf("float64_\n");
+                    sv_to_float64(&sv, (f64 *)&((string_view **)csv->data)[i][j]); 
+                    // sv_to_float64(&sv, &(((f64**)csv->data)[i][j]));
                     // sv_to_float64(&sv, (f64 *)&sv);
                     // printf("float : %lf\n", ((f64**)csv->data)[i][j]);
                     break;
