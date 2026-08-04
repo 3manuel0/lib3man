@@ -1,4 +1,6 @@
 #include "../includes/lib3man.h"
+#include <assert.h>
+#include <stdint.h>
 
 #if UINTPTR_MAX == 0xFFFFFFFFFFFFFFFFULL
     //alignment for 64bit
@@ -82,6 +84,7 @@ ArenaList *create_ArenaList(size_t size){
 void *arenaList_Alloc(ArenaList **arenalist, size_t size){
     assert(arenalist != NULL);
     assert(*arenalist != NULL);
+    assert(size < GiB(10));
     if((*arenalist)->arena.capacity >= (*arenalist)->arena.cur_size + size){
         return arena_Alloc(&(*arenalist)->arena, size);
     }

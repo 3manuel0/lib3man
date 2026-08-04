@@ -148,8 +148,9 @@ int sv_to_float64(const sv *sv, f64 *out){
     f64 temp = 0.0;
     f64 exponent = 1.0;
     // printf("-------------------------------------------\n");
-
-    if(sv->str[0] == '-'){
+    if( sv->str[0] == '+'){
+        i++;
+    }else if(sv->str[0] == '-'){
         is_negative = 1;
         i++;
     }
