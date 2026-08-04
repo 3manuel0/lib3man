@@ -367,14 +367,16 @@ void csv_write_file(const char *filename, const CSV *csv){
                 case string_:
                     fwrite(((sv **)csv->data)[i][j].str, 1, ((sv **)csv->data)[i][j].len,f);
                     break;
-                case float64_:
-                    fprintf(f, "%g", ((f64**)csv->data)[i][j]);
-                    break;
                 case int64_:
-                    fprintf(f, "%ld", ((i64**)csv->data)[i][j]);
+                    // fprintf(f, "%ld", ((i64**)csv->data)[i][j]);
+                    fprintf(f, "%ld", *(i64 *)&((string_view **)csv->data)[i][j]);
+                    break;
+                case float64_:
+                    // fprintf(f, "%g", ((f64**)csv->data)[i][j]);
+                    fprintf(f, "%g", *(f64 *)&((string_view **)csv->data)[i][j]);
                     break;
                 case boolean_:
-                    fprintf(f, "%s", ((int**)csv->data)[i][j] ? "True" : "False");
+                    fprintf(f, "%s", *(int *)&((string_view **)csv->data)[i][j] ? "True" : "False");
                     break;
                 default:
                     fwrite("Uknown type", 1, 12, stdout);
@@ -455,18 +457,21 @@ i32 csv_write_json(const CSV *csv, const char *filename){
                     // fwrite(((sv **)csv->data)[i][j].str, 1, ((sv **)csv->data)[i][j].len,f);
                     sv_write_j(&((sv **)csv->data)[i][j], f);
                     break;
-                case float64_:
-                    fwrite("\t\t", 1, 2, f);
-                    sv_write_j(&csv->head[j], f);
-                    fprintf(f, ": %g", ((f64**)csv->data)[i][j]);
-                    break;
                 case int64_:
                     fwrite("\t\t", 1, 2, f);
                     sv_write_j(&csv->head[j], f);
-                    fprintf(f, ": %ld", ((i64**)csv->data)[i][j]);
+                    // fprintf(f, ": %ld", ((i64**)csv->data)[i][j]);
+                    fprintf(f, "%ld", *(i64 *)&((string_view **)csv->data)[i][j]);
+                    break;
+                case float64_:
+                    fwrite("\t\t", 1, 2, f);
+                    sv_write_j(&csv->head[j], f);
+                    // fprintf(f, ": %g", ((f64**)csv->data)[i][j]);
+                    fprintf(f, "%g", *(f64 *)&((string_view **)csv->data)[i][j]);
+
                     break;
                 case boolean_:
-                    fprintf(f, "%s", ((int**)csv->data)[i][j] ? "True" : "False");
+                    fprintf(f, "%s", *(int *)&((string_view **)csv->data)[i][j] ? "True" : "False");
                     break;
                 default:
                     fwrite("Uknown type", 1, 12, f);
