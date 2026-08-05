@@ -461,17 +461,19 @@ i32 csv_write_json(const CSV *csv, const char *filename){
                     fwrite("\t\t", 1, 2, f);
                     sv_write_j(&csv->head[j], f);
                     // fprintf(f, ": %ld", ((i64**)csv->data)[i][j]);
-                    fprintf(f, "%ld", *(i64 *)&((string_view **)csv->data)[i][j]);
+                    fprintf(f, ": %ld", *(i64 *)&((string_view **)csv->data)[i][j]);
                     break;
                 case float64_:
                     fwrite("\t\t", 1, 2, f);
                     sv_write_j(&csv->head[j], f);
                     // fprintf(f, ": %g", ((f64**)csv->data)[i][j]);
-                    fprintf(f, "%g", *(f64 *)&((string_view **)csv->data)[i][j]);
+                    fprintf(f, ": %g", *(f64 *)&((string_view **)csv->data)[i][j]);
 
                     break;
                 case boolean_:
-                    fprintf(f, "%s", *(int *)&((string_view **)csv->data)[i][j] ? "True" : "False");
+                    fwrite("\t\t", 1, 2, f);
+                    sv_write_j(&csv->head[j], f);
+                    fprintf(f, ": %s", *(int *)&((string_view **)csv->data)[i][j] ? "True" : "False");
                     break;
                 default:
                     fwrite("Uknown type", 1, 12, f);
