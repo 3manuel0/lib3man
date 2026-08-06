@@ -535,7 +535,8 @@ string_view csv_get_sv_by_name(const CSV *csv, size_t row, string_view col_name)
 }
 
 void *csv_get_cell(const CSV *csv, size_t row, size_t col){
-    return &((void **)csv->data[row])[col];
+    // return &((void **)csv->data[row])[col];
+    return csv->data[row] + col * sizeof(string_view);// the fix
 }
 
 
