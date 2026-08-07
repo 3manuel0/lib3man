@@ -145,7 +145,7 @@ void testing_csv(){
     csv_write_file("out.csv", csv);
     csv_write_json(csv, "test.json");
     // // writing all the types
-    // csv_print_types(csv);
+    csv_print_types(csv);
     // printf("i64 : %ld\n", csv_get_int_by_name(csv, 0, sv_from_lit("x")));
     // printf("f64 : %lf\n", csv_get_float_by_name(csv, 0, sv_from_lit("x")));
     csv_free(csv);

@@ -91,7 +91,7 @@ string_view sv_from_sb(const string_buffer *sb);// string view from string buffe
 
 size_t sb_split_svs_char(const string_buffer * sb, char delimiter, string_view * sv_arr /* can be NULL*/, size_t sv_arr_len /* can be 0*/);// splits sb into sv_arr (use own array), returns the number of sub string (svs) in that sb
 
-int sv_cmp(const string_view *sv1, const string_view *sv2); // compare 2 string-views returns 0 if not equal and 1 if they are equal
+int sv_equal(const string_view *sv1, const string_view *sv2); // compare 2 string-views returns 0 if not equal and 1 if they are equal
 
 i64 sv_find_char(string_view sv, char c);// return the first index of char in the string_view, if not found returns -1
 
@@ -134,7 +134,7 @@ int sb_push_char(string_buffer *sb, char ch);// append (push) a charachter insid
 
 char * cstr_from_sb(const string_buffer *sb);// char * with /0 at the end from string_buffer
 
-int sb_cmp(string_buffer sb1, string_buffer sb2); // compare 2 string_buffers returns 1 (true) they are equals, else returns 0 (false)
+int sb_equal(string_buffer sb1, string_buffer sb2); // compare 2 string_buffers returns 1 (true) they are equals, else returns 0 (false)
 
 int sb_freadln(string_buffer *sb, FILE *stream);// reads a line from a file stream
 

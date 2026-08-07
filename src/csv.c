@@ -342,7 +342,7 @@ void csv_print_column_from_string(const CSV *csv, string_view column_name){
 
 ssize_t csv_get_column_index(const CSV *csv, string_view name){
     for(size_t i = 0; i < csv->numcols; i++){
-        if(sv_cmp(&name, &csv->head[i])){
+        if(sv_equal(&name, &csv->head[i])){
             return i;
         }
     }

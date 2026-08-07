@@ -60,7 +60,7 @@ size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NU
     return count;
 }
 
-int sv_cmp(const sv *sv1, const sv *sv2){
+int sv_equal(const sv *sv1, const sv *sv2){
     assert(sv1 != NULL && sv2 != NULL);
     if(sv1->len != sv2->len) return false;
     for(size_t i = 0; i < sv1->len; i++){
@@ -551,7 +551,7 @@ char * cstr_from_sb(const sb *sb){
     return sb->str;
 }
 
-int sb_cmp(string_buffer sb1, string_buffer sb2){
+int sb_equal(string_buffer sb1, string_buffer sb2){
     assert(sb1.str != NULL && sb2.str != NULL);
     if(sb1.len != sb2.len) return false;
     for(size_t i = 0; i < sb1.len; i++){
