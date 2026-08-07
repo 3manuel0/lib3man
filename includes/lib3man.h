@@ -93,6 +93,8 @@ size_t sb_split_svs_char(const string_buffer * sb, char delimiter, string_view *
 
 int sv_cmp(const string_view *sv1, const string_view *sv2); // compare 2 string-views returns 0 if not equal and 1 if they are equal
 
+i64 sv_find_char(string_view sv, char c);// return the first index of char in the string_view, if not found returns -1
+
 int sv_to_int64(const string_view *sv, i64 *out);// return true (1) if succesful else false (0), out is the pointer to which it writes the parsed number
 
 int sv_to_int32(const string_view *sv, i32 *out);// return true (1) if succesful else false (0), out is the pointer to which it writes the parsed number

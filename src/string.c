@@ -69,6 +69,20 @@ int sv_cmp(const sv *sv1, const sv *sv2){
     return true;
 }
 
+i64 sv_find_char(string_view sv, char c){
+    if(sv.len == 0 || sv.str == NULL){
+        return -1;
+    }
+
+    for(size_t i = 0; i < sv.len; i++){
+        if(sv.str[i] == c){
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 int sv_to_int64(const sv *sv, i64 *out){
     assert(sv != NULL);
     assert(sv->str != NULL && sv->len > 0);
@@ -270,7 +284,12 @@ sb create_sb_empty(size_t cap){
 sb sb_from_cstr(const char *str){
     assert(str != NULL);
     size_t len = strlen(str);
-    assert(len > 0);
+
+    if(len == 0){
+        fprintf(stderr, "sb_from_cstr Failed, str has len = 0\n");
+        return (sb){.str = NULL, .len = 0, .cap = 0};
+    }
+
     size_t cap = len * 2;
     char *temp = malloc(cap);
 

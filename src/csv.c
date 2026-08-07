@@ -365,7 +365,14 @@ void csv_write_file(const char *filename, const CSV *csv){
         for(size_t j = 0; j < csv->numcols; j++){
             switch ((int)csv->types[j]) {
                 case string_:
-                    fwrite(((sv **)csv->data)[i][j].str, 1, ((sv **)csv->data)[i][j].len,f);
+                    // checking for , to add "" 
+                    if(sv_find_char(((sv **)csv->data)[i][j], ',') != -1){
+                        fwrite("\"", 1, 1, f);
+                        fwrite(((sv **)csv->data)[i][j].str, 1, ((sv **)csv->data)[i][j].len,f);
+                        fwrite("\"", 1, 1, f);
+                    }else{
+                        fwrite(((sv **)csv->data)[i][j].str, 1, ((sv **)csv->data)[i][j].len,f);
+                    }
                     break;
                 case int64_:
                     // fprintf(f, "%ld", ((i64**)csv->data)[i][j]);
