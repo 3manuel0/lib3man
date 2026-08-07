@@ -118,8 +118,8 @@ void test_ArenaList(){
 }
 
 void testing_csv(){
-    CSV *csv = load_csv("test2.csv");
-    // CSV *csv = load_csv("big_1000_rows.csv");
+    // CSV *csv = load_csv("test2.csv");
+    CSV *csv = load_csv("customers-100.csv");
     if(csv == NULL){
         printf("failed to read csv\n");
         return;
