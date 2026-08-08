@@ -12,6 +12,18 @@ sv sv_from_cstr_sz(const char *str, size_t size){
     return (sv){.str = (char*) str, .len = size};
 }
 
+u32 sv_hash32(string_view sv){
+    u32 hash = FNV32_OFFSET_BASIS;
+
+    if(sv.len == 0 && sv.str != NULL) return hash;
+
+    for(size_t i = 0; i < sv.len; i++){
+        hash  ^= (u8)sv.str[i];
+        hash *= FNV32_PRIME;
+    }
+    return hash;
+}
+
 sv sv_from_cstr(const char *str){
     assert(str != NULL);
     size_t size = strlen(str);
@@ -558,6 +570,10 @@ int sb_equal(string_buffer sb1, string_buffer sb2){
         if(sb1.str[i] != sb2.str[i]) return false;
     }
     return true;
+}
+
+i64 sb_find_char(string_buffer sb, char c){
+    return sv_find_char(*(string_view*)&sb, c);
 }
 
 int sb_freadln(sb *sb, FILE *stream){

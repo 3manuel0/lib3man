@@ -18,7 +18,10 @@ int main(){
     // void testing_sv_to_float64();
     // testing_matrix();
     // test_ArenaList();
-    testing_csv();
+    string_view s = sv_from_lit("foobar");
+    u32 hash = sv_hash32(s);
+    printf("%u %x \n", hash, hash);
+    // testing_csv();
     return 0;
 }
 

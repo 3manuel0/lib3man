@@ -64,6 +64,9 @@ typedef struct bt_node {
 // ###########################################################################
 
 // ############ Length-Based string and dynamicly allocated string #############
+#define FNV32_PRIME 0x01000193
+#define FNV32_OFFSET_BASIS 0x811C9DC5
+
 typedef struct {
   char *str;
   size_t len;
@@ -84,6 +87,8 @@ enum { str_fail = -1, str_succ, str_err };
 
 // string-view functions ###############################################
 string_view sv_from_cstr_sz(const char *str, size_t size);// creating a string view from char * + size
+
+u32 sv_hash32(string_view sv);
 
 string_view sv_from_cstr(const char *str);// creating a string view from char *
 
@@ -135,6 +140,8 @@ int sb_push_char(string_buffer *sb, char ch);// append (push) a charachter insid
 char * cstr_from_sb(const string_buffer *sb);// char * with /0 at the end from string_buffer
 
 int sb_equal(string_buffer sb1, string_buffer sb2); // compare 2 string_buffers returns 1 (true) they are equals, else returns 0 (false)
+
+i64 sb_find_char(string_buffer sb, char c);
 
 int sb_freadln(string_buffer *sb, FILE *stream);// reads a line from a file stream
 
