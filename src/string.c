@@ -1,4 +1,5 @@
 #include "../includes/lib3man.h"
+#include <assert.h>
 
 // Important replaced wirte with fwrite :
 // 1- for buffering meaning printing is faster
@@ -632,6 +633,11 @@ int sb_fprint(string_buffer sb, FILE *stream){
 void sb_fwrite(string_buffer sb, FILE *stream){
     if(sb.str == NULL || sb.len == 0) return;
     fwrite(sb.str, 1, sb.len,stream);
+}
+
+void sb_clear(sb *sb){
+    assert(sb->str != NULL && sb->cap > 0);
+    sb->len = 0;
 }
 
 void sb_free(sb *sb){

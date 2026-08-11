@@ -155,6 +155,8 @@ int sb_fprint(string_buffer sb, FILE *stream);// prints sb to file stream, it re
 
 void sb_fwrite(string_buffer sb, FILE *stream);// wirtes sb to a file stream
 
+void sb_clear(sb *sb);// Resets string_buffer's length (len) to zero (0)
+
 void sb_free(string_buffer *sb); // frees string-buffer (for the heap one not the arena one)
 // ###########################################################################################
 
