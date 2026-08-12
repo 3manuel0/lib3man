@@ -15,7 +15,7 @@ sv sv_from_cstr_sz(const char *str, size_t size){
     return (sv){.str = (char*) str, .len = size};
 }
 
-u8 sv_eq_cstr(string_view sv, const char *str){
+bool sv_eq_cstr(string_view sv, const char *str){
     if(sv.str == NULL || sv.len == 0 || str == NULL)
         return false;
     for(size_t i = 0; i < sv.len; i++){
@@ -85,7 +85,7 @@ size_t sb_split_svs_char(const sb * sb, char delimiter, sv * sv_arr /* can be NU
     return count;
 }
 
-int sv_equal(const sv *sv1, const sv *sv2){
+bool sv_equal(const sv *sv1, const sv *sv2){
     assert(sv1 != NULL && sv2 != NULL);
     if(sv1->len != sv2->len) return false;
     for(size_t i = 0; i < sv1->len; i++){
@@ -108,7 +108,7 @@ i64 sv_find_char(string_view sv, char c){
     return -1;
 }
 
-int sv_to_int64(const sv *sv, i64 *out){
+bool sv_to_int64(const sv *sv, i64 *out){
     assert(sv != NULL);
     assert(sv->str != NULL && sv->len > 0);
 
@@ -142,7 +142,7 @@ int sv_to_int64(const sv *sv, i64 *out){
     return true;
 }
 
-int sv_to_int32(const sv *sv, i32 *out){
+bool sv_to_int32(const sv *sv, i32 *out){
     assert(sv != NULL);
     assert(sv->str != NULL && sv->len > 0);
 
@@ -178,7 +178,7 @@ int sv_to_int32(const sv *sv, i32 *out){
     return true;
 }
 
-int sv_to_float64(const sv *sv, f64 *out){
+bool sv_to_float64(const sv *sv, f64 *out){
     assert(sv != NULL);
     assert(sv->str != NULL && sv->len > 0);
 
@@ -576,7 +576,7 @@ char * cstr_from_sb(const sb *sb){
     return sb->str;
 }
 
-int sb_equal(string_buffer sb1, string_buffer sb2){
+bool sb_equal(string_buffer sb1, string_buffer sb2){
     assert(sb1.str != NULL && sb2.str != NULL);
     if(sb1.len != sb2.len) return false;
     for(size_t i = 0; i < sb1.len; i++){

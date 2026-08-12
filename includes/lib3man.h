@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stdbool.h>
 
 typedef uint8_t u8;
 typedef uint16_t u16;
@@ -18,8 +19,8 @@ typedef int32_t i32;
 typedef int64_t i64;
 typedef float f32;
 typedef double f64;
-#define false 0
-#define true 1
+// #define false 0
+// #define true 1
 
 // ############ Arena allocator ##############################################
 #define KiB(x) ((uint64_t)(x) << 10)
@@ -88,7 +89,7 @@ enum { str_fail = -1, str_succ, str_err };
 // string-view functions ###############################################
 string_view sv_from_cstr_sz(const char *str, size_t size);// creating a string view from char * + size
 
-u8 sv_eq_cstr(string_view sv, const char *str);// cheking if char * is the same as the string_view in terms of characters
+bool sv_eq_cstr(string_view sv, const char *str);// cheking if char * is the same as the string_view in terms of characters
 
 u32 sv_hash32(string_view sv);
 
@@ -98,15 +99,15 @@ string_view sv_from_sb(const string_buffer *sb);// string view from string buffe
 
 size_t sb_split_svs_char(const string_buffer * sb, char delimiter, string_view * sv_arr /* can be NULL*/, size_t sv_arr_len /* can be 0*/);// splits sb into sv_arr (use own array), returns the number of sub string (svs) in that sb
 
-int sv_equal(const string_view *sv1, const string_view *sv2); // compare 2 string-views returns 0 if not equal and 1 if they are equal
+bool sv_equal(const string_view *sv1, const string_view *sv2); // compare 2 string-views returns 0 if not equal and 1 if they are equal
 
 i64 sv_find_char(string_view sv, char c);// return the first index of char in the string_view, if not found returns -1
 
-int sv_to_int64(const string_view *sv, i64 *out);// return true (1) if succesful else false (0), out is the pointer to which it writes the parsed number
+bool sv_to_int64(const string_view *sv, i64 *out);// return true (1) if succesful else false (0), out is the pointer to which it writes the parsed number
 
-int sv_to_int32(const string_view *sv, i32 *out);// return true (1) if succesful else false (0), out is the pointer to which it writes the parsed number
+bool sv_to_int32(const string_view *sv, i32 *out);// return true (1) if succesful else false (0), out is the pointer to which it writes the parsed number
 
-int sv_to_float64(const string_view *sv, f64 *out);// return true (1) if succesful else false (0), out is the pointer to which it writes the parsed number 
+bool sv_to_float64(const string_view *sv, f64 *out);// return true (1) if succesful else false (0), out is the pointer to which it writes the parsed number 
 
 void sv_println(string_view sv); // prints string-view's string with new line(\n) at the end of it
 
@@ -141,7 +142,7 @@ int sb_push_char(string_buffer *sb, char ch);// append (push) a charachter insid
 
 char * cstr_from_sb(const string_buffer *sb);// char * with /0 at the end from string_buffer
 
-int sb_equal(string_buffer sb1, string_buffer sb2); // compare 2 string_buffers returns 1 (true) they are equals, else returns 0 (false)
+bool sb_equal(string_buffer sb1, string_buffer sb2); // compare 2 string_buffers returns 1 (true) they are equals, else returns 0 (false)
 
 i64 sb_find_char(string_buffer sb, char c);
 
