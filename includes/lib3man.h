@@ -88,6 +88,8 @@ enum { str_fail = -1, str_succ, str_err };
 // string-view functions ###############################################
 string_view sv_from_cstr_sz(const char *str, size_t size);// creating a string view from char * + size
 
+u8 sv_eq_cstr(string_view sv, const char *str);// cheking if char * is the same as the string_view in terms of characters
+
 u32 sv_hash32(string_view sv);
 
 string_view sv_from_cstr(const char *str);// creating a string view from char *
