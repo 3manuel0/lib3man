@@ -1,6 +1,7 @@
 #include "../includes/lib3man.h"
 #include <assert.h>
 #include <stddef.h>
+#include <string.h>
 #include <unistd.h>
 
 // Important replaced wirte with fwrite :
@@ -104,6 +105,33 @@ i64 sv_find_char(string_view sv, char c){
             return i;
         }
     }
+
+    return -1;
+}
+
+u64 sv_count_char(string_view sv, char ch){
+    assert(sv.str != NULL);
+    u64 count = 0;
+
+    for(size_t i = 0; i < sv.len; i++){
+        if(sv.str[i] == ch) 
+            count++;
+    }
+
+    return count;
+}
+
+i64 sv_index_of(string_view sv, char * s){
+    assert(sv.str != NULL);
+    size_t str_len = strlen(s);
+
+    // for(size_t i = 0; i < sv.len; i++){
+    //     if(sv.str[i] == s[0]){
+    //         for(size_t j = 1; j < str_len && i + j < sv.len; j++){
+    //             if(str[i + j] ==
+    //         }
+    //     }
+    // }
 
     return -1;
 }

@@ -103,6 +103,10 @@ bool sv_equal(const string_view *sv1, const string_view *sv2); // compare 2 stri
 
 i64 sv_find_char(string_view sv, char c);// return the first index of char in the string_view, if not found returns -1
 
+u64 sv_count_char(string_view sv, char ch);// returns the number of times the character is in the sv
+
+i64 sv_index_of(string_view sv, char * s);// returns index of the start of a string could be a string of 1 chracter
+
 bool sv_to_int64(const string_view *sv, i64 *out);// return true (1) if succesful else false (0), out is the pointer to which it writes the parsed number
 
 bool sv_to_int32(const string_view *sv, i32 *out);// return true (1) if succesful else false (0), out is the pointer to which it writes the parsed number
