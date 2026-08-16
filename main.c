@@ -1,6 +1,4 @@
 #include "includes/lib3man.h"
-#include <stddef.h>
-#include <stdio.h>
 
 void testing_sv_to_float64();
 void testing_sb();
@@ -18,9 +16,19 @@ int main(){
     // void testing_sv_to_float64();
     // testing_matrix();
     // test_ArenaList();
-    string_view s = sv_from_lit("foobar");
-    u32 hash = sv_hash32(s);
-    printf("%u %x \n", hash, hash);
+    // string_view s = sv_from_lit("foobar");
+    // u32 hash = sv_hash32(s);
+    // printf("%u %x \n", hash, hash);
+    string_view s = sv_from_lit("testing_test_123456");
+    //test for sv_index 
+    i64 index = sv_index_of(s, "test_");
+    printf("index = %zu\n", index);
+    index = sv_index_of(s, "t");
+    printf("index = %zu\n", index);
+    index = sv_index_of(s, "56");
+    printf("index = %zu %s\n", index, &s.str[index]);
+    index = sv_index_of(s, "G");
+    printf("index = %ld\n", index);
     // testing_csv();
     return 0;
 }

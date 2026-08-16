@@ -124,14 +124,18 @@ u64 sv_count_char(string_view sv, char ch){
 i64 sv_index_of(string_view sv, char * s){
     assert(sv.str != NULL);
     size_t str_len = strlen(s);
-
-    // for(size_t i = 0; i < sv.len; i++){
-    //     if(sv.str[i] == s[0]){
-    //         for(size_t j = 1; j < str_len && i + j < sv.len; j++){
-    //             if(str[i + j] ==
-    //         }
-    //     }
-    // }
+    size_t eq = 0;
+    for(size_t i = 0; i < sv.len; i++){
+        if(sv.str[i] == s[0]){
+            eq = 1;
+            for(size_t j = 1; j < str_len && i + j < sv.len; j++){
+                if(sv.str[i + j] == s[j]){
+                    eq ++;
+                }
+            }
+            if(eq == str_len) return i;
+        }
+    }
 
     return -1;
 }
