@@ -621,6 +621,10 @@ i64 sb_find_char(string_buffer sb, char c){
     return sv_find_char(*(string_view*)&sb, c);
 }
 
+i64 sb_index_of(string_buffer sb, char * s){
+    return sv_index_of(*(string_view*)&sb, s);
+}
+
 int sb_freadln(sb *sb, FILE *stream){
     assert(stream != NULL && sb != NULL);
     assert(sb->cap > 0 && sb->str != NULL);
