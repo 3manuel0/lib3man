@@ -1,6 +1,5 @@
 #include "../includes/lib3man.h"
-#include <assert.h>
-#include <stdint.h>
+#include <unistd.h>
 
 #if UINTPTR_MAX == 0xFFFFFFFFFFFFFFFFULL
     //alignment for 64bit
@@ -22,7 +21,7 @@ Arena create_Arena(size_t arena_size){
     arena.memory = malloc(arena.capacity);
     if(arena.memory == NULL){
         fprintf(stderr, "Error, Arena Allocation Failed\n");
-        exit(-1);
+        return (Arena){NULL, NULL, 0, 0};
     }
     arena.address = arena.memory;
     arena.cur_size = 0;

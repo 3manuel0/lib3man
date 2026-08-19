@@ -1,6 +1,8 @@
 #include "../includes/lib3man.h"
-#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
+// !!! TODO SHOULD WRITE THE CSV INTO THE ARENA AN JUST POINT USING STRING_VIEW TO THOSE STRINGS
 // TODO: ADD OTHER SUPPORT FOR OTHER TYPES 
 
 // ***************************************************************************
@@ -40,7 +42,14 @@ CSV *load_csv(char *file_name){
 
     fseek(csv_f, 0, SEEK_END);
 
-    size_t temp_file_size = ftell(csv_f);
+    i64 temp_file_size = ftell(csv_f);
+
+    // incase ftell returns -1
+    if(temp_file_size == -1){
+        fprintf(stderr, "FILE SIZE ERROR !\n");
+        return NULL;
+    }
+
     u8 * csv_mem = calloc(temp_file_size + KiB(2), sizeof(u8));
 
     if(csv_mem == NULL){
@@ -136,8 +145,14 @@ CSV *create_csv(){
     CSV *csv = malloc(sizeof(CSV));
     if(csv == NULL) return NULL;
     csv->gl_arena = create_ArenaList(MiB(250));
-    if(csv->gl_arena == NULL) return NULL;
-    if(csv->gl_arena->arena.memory == NULL) return NULL;
+    if(csv->gl_arena == NULL) {
+        free(csv);// avoid (CSV *) memory leak if the arena failed
+        return NULL;
+    }
+    if(csv->gl_arena->arena.memory == NULL){
+        free(csv);// avoid (CSV *) memory leak if the arena failed
+        return NULL;
+    }
     csv->gl_arena->next = NULL;
     return csv;
 }
