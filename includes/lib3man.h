@@ -276,7 +276,7 @@ void print_type(csv_type t);
 // ##########################################################################################
 
 //############ Matrix #######################################################################
-typedef struct Matrix{
+typedef struct {
     f64    *mtx;
     size_t rows;
     size_t cols;
@@ -310,6 +310,18 @@ Matrix matrix_transpose(Matrix matrix);// matrix transpose (fliping rows with co
 void matrix_print(Matrix matrix);// prints the matrix
 
 void matrix_free(Matrix *matrix);// free memory
+
+//############ Vector #######################################################################
+typedef struct {
+    f64    *vec;
+    size_t len;
+}Vector; 
+
+Vector vector_create_empty(size_t len);// creates a vector full of zeros
+
+Vector vector_create(size_t len, f64 arr[len]);// creates a vector from an array of float-64-bit
+
+void vector_free(Vector *vec);// free memory
 
 // ######################################################################################################################
 #endif

@@ -13,6 +13,11 @@ Matrix matrix_create_empty(size_t rows, size_t cols){
 Matrix matrix_create(size_t rows, size_t cols, f64 arr[rows][cols]){
     assert(arr != NULL);
     Matrix m = matrix_create_empty(rows, cols);
+
+    if(m.mtx == NULL){
+        return m;
+    }
+
     for(size_t i = 0; i < rows; i++){
         for(size_t j = 0; j < cols; j++){
             printf("%lf %zu\n", arr[i][j], (i * m.cols) + j);
@@ -152,6 +157,7 @@ void matrix_print(Matrix matrix){
 
 void matrix_free(Matrix *matrix){
     assert(matrix != NULL);
+    assert(matrix->mtx != NULL);// to not free a NULL pointer
     free(matrix->mtx);
     matrix->cols = 0;
     matrix->rows = 0;
