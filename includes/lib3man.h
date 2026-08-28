@@ -321,6 +321,10 @@ Vector vector_create_empty(size_t len);// creates a vector full of zeros
 
 Vector vector_create(size_t len, f64 arr[len]);// creates a vector from an array of float-64-bit
 
+void vector_randomize(Vector* vector, f64 min, f64 max);
+
+void vector_scale(Vector *vector, f64 k);
+
 Vector vector_dot(Vector a, Vector b);
 
 void vector_free(Vector *vec);// free memory

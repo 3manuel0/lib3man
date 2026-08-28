@@ -115,8 +115,12 @@ Matrix matrix_dot(Matrix a, Matrix b){
 void matrix_scale(Matrix *matrix, f64 k){
     assert(matrix != NULL);
     assert(matrix->mtx != NULL);
-    for(size_t i = 0; i < matrix->cols * matrix->rows; i++)
+
+    for(size_t i = 0; i < matrix->cols * matrix->rows; i++){
+
         matrix->mtx[i] *= k;
+        
+    }
 }
 
 Matrix matrix_copy(Matrix src){

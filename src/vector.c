@@ -12,6 +12,26 @@ Vector vector_create_empty(size_t len){
     return (Vector){.vec = temp, .len =len};
 }
 
+void vector_randomize(Vector* vector, f64 min, f64 max){
+    assert(vector != NULL);
+    assert(vector->vec != NULL);
+    for(size_t i = 0; i < vector->len; i++){
+        f64 u = (f64)u32_entropy_random() / (f64)UINT32_MAX;
+        vector->vec[i] = min + u * (max - min);
+    }
+}
+
+void vector_scale(Vector *vector, f64 k){
+    assert(vector != NULL);
+    assert(vector->vec != NULL);
+
+    for(size_t i = 0; i < vector->len; i++){
+
+        vector->vec[i] *= k;
+
+    }
+}
+
 Vector  vector_create(size_t len, f64 arr[len]){
     assert(arr != NULL);
     Vector v = vector_create_empty(len);
@@ -40,7 +60,6 @@ Vector vector_dot(Vector a, Vector b){
     }
     return temp;
 }
-
 
 void vector_free(Vector *vec){
     assert(vec != NULL);
