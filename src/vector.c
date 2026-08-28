@@ -25,6 +25,23 @@ Vector  vector_create(size_t len, f64 arr[len]){
     return v;
 }
 
+Vector vector_dot(Vector a, Vector b){
+    assert(a.vec != NULL && b.vec != NULL);
+    if(a.len != b.len){
+        printf("VECTORS LEGTH DON'T MATCH, UNDIFINED BEHAVIOUR!\n");
+        return (Vector) {.vec = NULL, .len = 0};
+    }
+    Vector temp = vector_create_empty(a.len);
+
+    for(size_t i = 0; i < a.len; i++){
+
+        temp.vec[i] = a.vec[i] * b.vec[i];;
+
+    }
+    return temp;
+}
+
+
 void vector_free(Vector *vec){
     assert(vec != NULL);
     assert(vec->vec != NULL); // to not free a NULL pointer
