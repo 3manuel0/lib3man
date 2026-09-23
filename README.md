@@ -1,6 +1,6 @@
 ## Lib3man
 
-Lib3man is a small C library I'm building for learning purposes and to use in my other C projects.
+Lib3man is my small C library I'm building for learning purposes and to use in my other C projects.
 
 ### It has:
 
@@ -38,6 +38,7 @@ Lib3man is a small C library I'm building for learning purposes and to use in my
 
 ### Goals
 
+- Keep Hand-Coding (I really enjoy hand-coding/learning for this project)
 - Explore low-level C design, memory management, math etc...
 - Build a personal "Standard Library" for my other projects.
 - Having fun while also understanding complex concepts.
