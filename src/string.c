@@ -15,10 +15,17 @@ sv sv_from_cstr_sz(const char *str, size_t size){
 bool sv_eq_cstr(string_view sv, const char *str){
     if(sv.str == NULL || sv.len == 0 || str == NULL)
         return false;
-    for(size_t i = 0; i < sv.len; i++){
+
+    size_t i = 0;
+
+    for(; i < sv.len; i++){
         if(str[i] == 0) return false;
         if(sv.str[i] != str[i]) return false;
     }
+
+    if(str[i] != 0) 
+        return false;
+    
     return true;
 }
 

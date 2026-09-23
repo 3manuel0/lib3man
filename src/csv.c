@@ -142,17 +142,23 @@ void csv_to_memory(u8 *mem, FILE *file, size_t size, size_t *numcolumn, size_t *
 }
 
 CSV *create_csv(){
-    CSV *csv = malloc(sizeof(CSV));
-    if(csv == NULL) return NULL;
+    CSV *csv = calloc(1, sizeof(CSV));
+
+    if(csv == NULL) 
+        return NULL;
+
     csv->gl_arena = create_ArenaList(MiB(250));
+
     if(csv->gl_arena == NULL) {
         free(csv);// avoid (CSV *) memory leak if the arena failed
         return NULL;
     }
+
     if(csv->gl_arena->arena.memory == NULL){
         free(csv);// avoid (CSV *) memory leak if the arena failed
         return NULL;
     }
+    
     csv->gl_arena->next = NULL;
     return csv;
 }
