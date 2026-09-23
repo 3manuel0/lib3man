@@ -161,8 +161,12 @@ void matrix_print(Matrix matrix){
 
 void matrix_free(Matrix *matrix){
     assert(matrix != NULL);
-    assert(matrix->mtx != NULL);// to not free a NULL pointer
-    free(matrix->mtx);
+
+    if(matrix->mtx != NULL){// to not free a NULL pointer
+        free(matrix->mtx);
+    }
+
+    matrix->mtx = NULL;
     matrix->cols = 0;
     matrix->rows = 0;
 }

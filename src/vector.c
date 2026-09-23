@@ -63,7 +63,11 @@ Vector vector_dot(Vector a, Vector b){
 
 void vector_free(Vector *vec){
     assert(vec != NULL);
-    assert(vec->vec != NULL); // to not free a NULL pointer
-    free(vec->vec);
+
+    if(vec->vec != NULL){ // to not free a NULL pointer
+        free(vec->vec);
+    }
+    
+    vec->vec = NULL;
     vec->len = 0;
 }
