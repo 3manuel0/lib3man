@@ -19,17 +19,17 @@ int main(){
     // string_view s = sv_from_lit("foobar");
     // u32 hash = sv_hash32(s);
     // printf("%u %x \n", hash, hash);
-    string_view s = sv_from_lit("testing_test_123456");
+    // string_view s = sv_from_lit("testing_test_123456");
     //test for sv_index 
-    i64 index = sv_index_of(s, "test_");
-    printf("index = %zu\n", index);
-    index = sv_index_of(s, "t");
-    printf("index = %zu\n", index);
-    index = sv_index_of(s, "56");
-    printf("index = %zu %s\n", index, &s.str[index]);
-    index = sv_index_of(s, "G");
-    printf("index = %ld\n", index);
-    // testing_csv();
+    // i64 index = sv_index_of(s, "test_");
+    // printf("index = %zu\n", index);
+    // index = sv_index_of(s, "t");
+    // printf("index = %zu\n", index);
+    // index = sv_index_of(s, "56");
+    // printf("index = %zu %s\n", index, &s.str[index]);
+    // index = sv_index_of(s, "G");
+    // printf("index = %ld\n", index);
+    testing_csv();
     return 0;
 }
 

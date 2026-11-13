@@ -5,13 +5,16 @@
 // !!! TODO SHOULD WRITE THE CSV INTO THE ARENA AN JUST POINT USING STRING_VIEW TO THOSE STRINGS
 // TODO: ADD OTHER SUPPORT FOR OTHER TYPES 
 
+// UPDATE 11/13/26 : Removed redundancy by using string_view the way I intended for
+// it, as using it to refrance strings (char *) from the csv file that was read isntead of creating new strings
+
 // ***************************************************************************
     void csv_to_memory(u8 *mem, FILE *file, size_t size, size_t *numcolumns,
                     size_t *numrows);
 
     int csv_parse_head(CSV *csv, u8 *mem);
 
-    u8 *csv_parse_row(ArenaList *arena, string_view *csv_row, csv_type *csv_data, u8 *mem);
+    u8 *csv_parse_row(string_view *csv_row, csv_type *csv_data, u8 *mem);
 
     csv_type get_type(string_view *sv, csv_type t);
 
@@ -50,13 +53,16 @@ CSV *load_csv(char *file_name){
         return NULL;
     }
 
-    u8 * csv_mem = calloc(temp_file_size + KiB(2), sizeof(u8));
+    // u8 * csv_mem = calloc(temp_file_size + KiB(2), sizeof(u8));
+
+    u8 * csv_mem = arenaList_Alloc( &csv->gl_arena, temp_file_size + KiB(2));
 
     if(csv_mem == NULL){
         fprintf(stderr, "Error, Memory Allocation Failed");
         // csv_free(csv);
         return NULL;
     }
+    memset(csv_mem, 0, temp_file_size + KiB(2));
 
     printf("size + 2kib=%zu size=%zu\n", ftell(csv_f) + KiB(2), ftell(csv_f));
 
@@ -86,7 +92,7 @@ CSV *load_csv(char *file_name){
     csv_parse(csv, csv_mem);
     // printf("string: ");
     csv_parse_with_types(csv);
-    free(csv_mem);
+    // free(csv_mem);
     // string_view t = ((string_view **)csv->data)[0][3];
     // printf("len = %zu\n", t.len);
     // sv_print(t);
@@ -167,7 +173,7 @@ int csv_parse_head(CSV *csv, u8 *mem){
     csv->head = arenaList_Alloc(&csv->gl_arena, sizeof(sv) * csv->numcols);
     printf("numcolumn = %zu | numrow = %zu\n", csv->numcols, csv->numrows);
     assert(csv->numrows > 0);
-    csv_parse_row(csv->gl_arena, csv->head, NULL,mem);
+    csv_parse_row( csv->head, NULL,mem);
     // string_println(csv->head[i]);
     return 0;
 }
@@ -190,7 +196,7 @@ void csv_free(CSV *csv){
     free(csv);
 }
 
-u8 *csv_parse_row(ArenaList *arena, string_view *csv_row, csv_type *csv_types, u8 *mem){
+u8 *csv_parse_row(string_view *csv_row, csv_type *csv_types, u8 *mem){
     size_t count = 0;
     size_t current_column = 0;
     u8 is_quotes = false; // checking if test in quotations to not split using the ,
@@ -204,9 +210,10 @@ u8 *csv_parse_row(ArenaList *arena, string_view *csv_row, csv_type *csv_types, u
         if(mem[i] == ',' && !is_quotes){
             // printf("%c %zu %c\n" , mem[i], count, mem[i - count]);
             // csv->head[current_column] = arenaList_Alloc(arenas, sizeof(string));
-            csv_row[current_column].str = arenaList_Alloc(&arena, count);
+            // csv_row[current_column].str = arenaList_Alloc(&arena, count);
+            csv_row[current_column].str = (char *)&mem[i - count];
             csv_row[current_column].len = count;
-            memcpy(csv_row[current_column].str, &mem[i - count], count);
+            // memcpy(csv_row[current_column].str, &mem[i - count], count);
             // checking types
             if(csv_types != NULL){
                 if(csv_types[current_column] != string_)
@@ -221,9 +228,10 @@ u8 *csv_parse_row(ArenaList *arena, string_view *csv_row, csv_type *csv_types, u
         }
     }
     // add the last column that's before the \n
-    csv_row[current_column].str = arenaList_Alloc(&arena, count);
+    // csv_row[current_column].str = arenaList_Alloc(&arena, count);
+    csv_row[current_column].str = (char *)&mem[i - count];
     csv_row[current_column].len = count;
-    memcpy(csv_row[current_column].str, &mem[i - count], count);
+    // memcpy(csv_row[current_column].str, &mem[i - count], count);
     // checking types
     if(csv_types != NULL){
         if(csv_types[current_column] != string_)
@@ -265,7 +273,7 @@ int csv_parse(CSV *csv, u8 *mem){
     csv->data = arenaList_Alloc(&csv->gl_arena, sizeof(sv **) * csv->numrows);
     for(size_t i = 0; i < csv->numrows; i++){
         csv->data[i] = arenaList_Alloc(&csv->gl_arena, sizeof(sv) * csv->numcols);
-        mem = csv_parse_row(csv->gl_arena, csv->data[i], csv->types, mem);
+        mem = csv_parse_row( csv->data[i], csv->types, mem);
     }
     
     return 0;
