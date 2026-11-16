@@ -1,6 +1,5 @@
 #include "../includes/lib3man.h"
-#include <stdlib.h>
-#include <unistd.h>
+
 
 // !!! TODO SHOULD WRITE THE CSV INTO THE ARENA AN JUST POINT USING STRING_VIEW TO THOSE STRINGS
 // TODO: ADD OTHER SUPPORT FOR OTHER TYPES 
@@ -72,14 +71,14 @@ CSV *load_csv(char *file_name){
     csv_to_memory(csv_mem, csv_f, temp_file_size, &csv->numcols, &csv->numrows);
     if(csv->numcols == 0 || csv->numrows == 0){
         printf("Error, csv Parcing Failed!\n");
-        // csv_free(csv);
-        free(csv_mem);
+        csv_free(csv);
+        // free(csv_mem);
         return NULL;
     }
     
     if(csv_parse_head(csv, csv_mem)){
-        // csv_free(csv);
-        free(csv_mem);
+        csv_free(csv);
+        // free(csv_mem);
         return  NULL;
     }
 
